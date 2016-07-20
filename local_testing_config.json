@@ -1,0 +1,19 @@
+{
+	"webServerConfig":
+	{
+		"http":
+		{
+			"host": "0.0.0.0"
+			,"port": 80
+		}
+	}
+	,"companyName": "Polaris"
+	,"cipherSecret": "bnegr9he4q53490"
+	,"authorizeBaseEndpoint": "http://127.0.0.1:82"
+	,"reCaptchaSettings":
+	{
+		"siteKey": "6LdSMx8TAAAAAARCvQT57WDNQq5m_qWN61Cn0D9Q"
+		,"serverSecret": "6LdSMx8TAAAAAAtK-L5u4oAryroTaHrsgxAv_XXK"
+		,"url": "https://www.google.com/recaptcha/api/siteverify"
+	}
+}
