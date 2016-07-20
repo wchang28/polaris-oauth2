@@ -3,7 +3,7 @@ import * as core from 'express-serve-static-core';
 import {AES256 as Aes256} from './aes256';
 import {IGlobal} from '../global';
 import {Router as uiRouter} from './ui';
-import {VerifyMiddleware as reCaptchaVerifyMiddleware} from './recaptcha'; //var reCaptchaVerify = require('./recaptcha');
+import {VerifyMiddleware as reCaptchaVerifyMiddleware} from './recaptcha';
 
 function getGlobal(req: express.Request) : IGlobal {
     return req.app.get('global');
