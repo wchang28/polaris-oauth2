@@ -1,19 +1,17 @@
-var $ = require('jquery-no-dom');
-var $J = require('ajaxon')($);
-var _ = require('lodash');
+import {getAJaxon} from 'ajaxon';
+let $J = getAJaxon(require('jquery-no-dom'));
+import * as _ from 'lodash';
 
-module.exports = function(authorizeBaseEndpoint, client_id, redirect_uri, client_secret) {
-	this.client_id = client_id;
-	this.redirect_uri = redirect_uri;
-	this.client_secret = client_secret;
-	
-	var baseData = {
-		client_id: client_id
-		,redirect_uri: redirect_uri
-		,client_secret: client_secret		
-	};
-	
-	function getError(httpErr) {
+export class Client {
+	private baseData:any = null;
+	constructor (private authorizeBaseEndpoint:string, private client_id:string, private redirect_uri:string, private client_secret:string) {
+		this.baseData = {
+			client_id: client_id
+			,redirect_uri: redirect_uri
+			,client_secret: client_secret		
+		};		
+	}
+	getError(httpErr) {
 		if (httpErr) {
 			if (httpErr.responseJSON)
 				return httpErr.responseJSON;
@@ -28,68 +26,56 @@ module.exports = function(authorizeBaseEndpoint, client_id, redirect_uri, client
 		} else
 			return null;
 	}
-	
-	// done(err, connectedApp)
-	this.getConnectedApp = function(done) {
-		var url = authorizeBaseEndpoint + "/services/authorize/get_client"
-		$J("POST", url, baseData, function(err, client) {
-			if (typeof done === 'function') done(getError(err), client);
-		}, null, false);
+	$P(path:string, data: any, done:(err:any, ret:any) => void) {
+		$J('POST', this.authorizeBaseEndpoint + path, data, done, null, false);
+	}
+	getConnectedApp(done:(err:any, connectedApp:any) => void) {
+		let data = this.baseData;
+		this.$P("/services/authorize/get_client", data, (err, client) => {
+			if (typeof done === 'function') done(this.getError(err), client);
+		});
+	}
+	userLogin(response_type:string, username:string, password:string, signUpUser:boolean, done:(err:any, ret:any) => void) {
+		let data = _.assignIn({}, this.baseData, {'response_type' : response_type, 'username': username, 'password': password, 'signUpUser': signUpUser});
+		this.$P("/services/authorize/login", data, (err, ret) => {
+			if (typeof done === 'function') done(this.getError(err), ret);
+		});
 	};
-	// done(err, ret)
-	this.userLogin = function(response_type, username, password, signUpUser, done) {
-		var data = _.assignIn({}, baseData, {'response_type' : response_type, 'username': username, 'password': password, 'signUpUser': signUpUser});
-		var url = authorizeBaseEndpoint + "/services/authorize/login"
-		$J("POST", url, data, function(err, ret) {
-			if (typeof done === 'function') done(getError(err), ret);
-		}, null, false);
+	getAccessFromAuthCode(code:string, done:(err:any, access:any) => void) {
+		let data = _.assignIn({}, this.baseData, {'code' : code});
+		this.$P("/services/authorize/get_access_from_auth_code", data, (err, access) => {
+			if (typeof done === 'function') done(this.getError(err), access);
+		});
 	};
-	// done(err, access)
-	this.getAccessFromAuthCode = function(code, done) {
-		var data = _.assignIn({}, baseData, {'code' : code});
-		var url = authorizeBaseEndpoint + "/services/authorize/get_access_from_auth_code"
-		$J("POST", url, data, function(err, access) {
-			if (typeof done === 'function') done(getError(err), access);
-		}, null, false);
+	refreshToken(refresh_token:string, done:(err:any, access:any) => void) {
+		let data = _.assignIn({}, this.baseData, {'refresh_token' : refresh_token});
+		this.$P("/services/authorize/refresh_token", data, (err, access) => {
+			if (typeof done === 'function') done(this.getError(err), access);
+		});
 	};
-	// done(err, access)
-	this.refreshToken = function(refresh_token, done) {
-		var data = _.assignIn({}, baseData, {'refresh_token' : refresh_token});
-		var url = authorizeBaseEndpoint + "/services/authorize/refresh_token"
-		$J("POST", url, data, function(err, access) {
-			if (typeof done === 'function') done(getError(err), access);
-		}, null, false);
+	SSPR(username:string, done:(err:any, data:any) => void) {
+		let data = _.assignIn({}, this.baseData, {'username' : username});
+		this.$P("/services/authorize/sspr", data, (err, data) => {
+			if (typeof done === 'function') done(this.getError(err), data);
+		});
 	};
-	// done(err, data)
-	this.SSPR = function(username, done) {
-		var data = _.assignIn({}, baseData, {'username' : username});
-		var url = authorizeBaseEndpoint + "/services/authorize/sspr"
-		$J("POST", url, data, function(err, data) {
-			if (typeof done === 'function') done(getError(err), data);
-		}, null, false);
+	resetPassword(pin:string, done:(err:any, data:any) => void) {
+		let data = _.assignIn({}, this.baseData, {'pin' : pin});
+		this.$P("/services/authorize/reset_password", data, (err, data) => {
+			if (typeof done === 'function') done(this.getError(err), data);
+		});
 	};
-	// done(err, data)
-	this.resetPassword = function(pin, done) {
-		var data = _.assignIn({}, baseData, {'pin' : pin});
-		var url = authorizeBaseEndpoint + "/services/authorize/reset_password"
-		$J("POST", url, data, function(err, data) {
-			if (typeof done === 'function') done(getError(err), data);
-		}, null, false);
+	lookupUser(username:string, done:(err:any, data:any) => void) {
+		let data = _.assignIn({}, this.baseData, {'username' : username});
+		let url = this.authorizeBaseEndpoint + "/services/authorize/lookup_user"
+		this.$P("/services/authorize/lookup_user", data, (err, data) => {
+			if (typeof done === 'function') done(this.getError(err), data);
+		});		
 	};
-	// done(err, data)
-	this.lookupUser = function(username, done) {
-		var data = _.assignIn({}, baseData, {'username' : username});
-		var url = authorizeBaseEndpoint + "/services/authorize/lookup_user"
-		$J("POST", url, data, function(err, data) {
-			if (typeof done === 'function') done(getError(err), data);
-		}, null, false);		
+	signUpNewUser(accountOptions:any, done:(err:any, data:any) => void) {
+		let data = _.assignIn({}, this.baseData, {'accountOptions' : accountOptions});
+		this.$P("/services/authorize/sign_up_new_user", data, (err, data) => {
+			if (typeof done === 'function') done(this.getError(err), data);
+		});			
 	};
-	// done (err, data)
-	this.signUpNewUser = function(accountOptions, done) {
-		var data = _.assignIn({}, baseData, {'accountOptions' : accountOptions});
-		var url = authorizeBaseEndpoint + "/services/authorize/sign_up_new_user"
-		$J("POST", url, data, function(err, data) {
-			if (typeof done === 'function') done(getError(err), data);
-		}, null, false);			
-	};
-};
+}

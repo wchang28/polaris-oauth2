@@ -41,15 +41,7 @@ let g: IGlobal = {
 };
 app.set('global', g);
 
-function servicesMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
-	req["companyName"] = config.companyName;
-	req["authorizeBaseEndpoint"] = config.authorizeBaseEndpoint;
-	req["cipherSecret"] = config.cipherSecret;
-	req["reCaptchaSettings"] = config.reCaptchaSettings;
-	next();
-}
-
-app.use('/services', servicesMiddleware, servicesRouter);
+app.use('/services', servicesRouter);
 app.use('/bower_components', express.static(path.join(__dirname, '../bower_components')));	// bower_components
 app.use('/login', express.static(path.join(__dirname, '../login')));	// login UI
 
