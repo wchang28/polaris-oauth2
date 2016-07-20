@@ -6,20 +6,8 @@ import noCache = require('no-cache-express');
 import * as multer from 'multer';
 import {Router as servicesRouter} from './services';
 import {IWebServerConfig, startServer} from 'express-web-server';
-
-interface IreCaptchaSettings {
-	siteKey: string
-	serverSecret: string
-	url: string
-}
-
-interface IAppConfig {
-	webServerConfig?: IWebServerConfig;
-	companyName: string;
-	cipherSecret: string;
-	authorizeBaseEndpoint: string;
-	reCaptchaSettings: IreCaptchaSettings;
-}
+import {IAppConfig} from './appConfig';
+import {IGlobal} from './global';
 
 let app = express();
 
@@ -48,9 +36,10 @@ else
 
 app.set('jsonp callback name', 'cb');
 
-app.set('global', {
+let g: IGlobal = {
 	config: config
-});
+};
+app.set('global', g);
 
 function servicesMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
 	req["companyName"] = config.companyName;
