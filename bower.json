@@ -7,7 +7,7 @@
   ],
   "license": "MIT",
   "keywords": [
-    "TPO"
+    "OAuth2"
   ],
   "moduleType": [
     "es6",
@@ -24,7 +24,6 @@
   ],
   "dependencies": {
     "font-awesome": "^4.6.1",
-    "w3-css": "git://github.com/wchang28/w3-css.git",
-    "jquery": "^2.2.3"
+    "w3-css": "git://github.com/wchang28/w3-css.git"
   }
 }
