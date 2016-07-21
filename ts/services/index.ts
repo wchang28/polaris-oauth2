@@ -5,7 +5,7 @@ import {IGlobal} from '../global';
 import {Router as oauth2Router} from './oauth2';
 import {Router as clientAppRouter} from './clientApp';
 import {Router as uiRouter} from './ui';
-import {AuthorizationEndPoint} from './authEndPoint';
+import {AuthorizationEndPoint} from '../authEndPoint';
 import {VerifyMiddleware as reCaptchaVerifyMiddleware} from './recaptcha';
 import {IAppParams} from '../appParams';
 import {IClientAppSettings} from '../oauth2';

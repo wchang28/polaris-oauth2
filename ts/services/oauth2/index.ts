@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as core from 'express-serve-static-core';
-import {AuthorizationEndPoint} from '../authEndPoint';
+import {AuthorizationEndPoint} from '../../authEndPoint';
 import {AES256 as Aes256} from '../aes256';
 import {IGlobal} from '../../global';
 import {IAppParams} from '../../appParams';
@@ -28,7 +28,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 			let ae = new AuthorizationEndPoint(getGlobal(req).config.authorizeBaseEndpoint, data);
 			switch(data.grant_type) {
 				case "password": {
-					ae.userLogin('token', true, data.username, data.password, (err, ret) => {
+					ae.userLogin('token', true, data.username, data.password, false, (err, ret) => {
 						if (err)
 							onError(err);
 						else

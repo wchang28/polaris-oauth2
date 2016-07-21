@@ -39,7 +39,7 @@ var Login = React.createClass({
 				p: this.props.p
 				,username: username
 				,password: password
-				,signUpUser: false
+				,signUpUserForApp: false
 			};
 			$J('POST', '/services/client/login', data, function(err, ret) {
 				if (err)
@@ -257,7 +257,7 @@ var SignUpAndLogin = React.createClass({
 				p: this.props.p
 				,username: global.signupEmail
 				,password: password
-				,signUpUser: true
+				,signUpUserForApp: true
 			};
 			$J('POST', '/services/client/login', data, function(err, ret) {
 				if (err)
