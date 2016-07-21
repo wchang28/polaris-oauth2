@@ -68,7 +68,7 @@ export class ClientAppAuthEndPoint {
 			}
 			,access: {
 				token_type: 'Bearer'
-				,access_token: '98ghqhvra89vajvo834perd9i8237627bgvm'
+				,access_token: 'tiutrtugghir5899y4hggoirtwrogj45hrtg0p9wug45'
 			}
 		}
 		done(null, ret);
