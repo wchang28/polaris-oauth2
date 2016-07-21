@@ -1,8 +1,15 @@
-var express = require('express');
-var router = express.Router();
+import * as express from 'express';
+import * as core from 'express-serve-static-core';
+import {Client} from '../client';
 
-router.post('/get_client', function(req, res) {
-	req.client.getConnectedApp(function(err, connectedApp) {
+let router = express.Router();
+
+function getClient(req: express.Request) : Client {
+	return req["client"];
+}
+
+router.post('/get_client', (req: express.Request, res: express.Response) => {
+	getClient(req).getConnectedApp((err, connectedApp) => {
 		if (err)
 			res.status(400).json(err);
 		else
@@ -10,11 +17,11 @@ router.post('/get_client', function(req, res) {
 	});
 });
 
-router.post('/lookup_user', function(req, res) {
-	var data = req.body;
+router.post('/lookup_user', (req: express.Request, res: express.Response) => {
+	let data = req.body;
 	// data.username
-	var username = data.username;
-	req.client.lookupUser(username, function(err, data) {
+	let username = data.username;
+	getClient(req).lookupUser(username, (err, data) => {
 		if (err)
 			res.status(400).json(err);
 		else
@@ -23,27 +30,27 @@ router.post('/lookup_user', function(req, res) {
 });
 
 // login post - login UI will make this call when the "Login" button is pressed
-router.post('/login', function(req, res) {
+router.post('/login', (req: express.Request, res: express.Response) => {
 	console.log('hitting /login');
-	var data = req.body;
+	let data = req.body;
 	//console.log(JSON.stringify(data));
 	// data.username, data.password, data.signUpUser
-	var signUpUser = (data.signUpUser ? true : false);
-	var params = req.parameters;
-	var response_type = params.response_type;
-	req.client.userLogin(response_type, data.username, data.password, signUpUser, function(err, ret) {
+	let signUpUser = (data.signUpUser ? true : false);
+	let params = req["parameters"];
+	let response_type = params.response_type;
+	getClient(req).userLogin(response_type, data.username, data.password, signUpUser, (err, ret) => {
 		if (err)
 			res.status(400).json(err);
 		else {
-			var user = ret.user;
-			var redirectUrl = req.client.redirect_uri;
+			let user = ret.user;
+			let redirectUrl = getClient(req).redirect_uri;
 			if (response_type === 'code') {	// response_type is auth code => put auth code in url query string
 				redirectUrl += '?code=' + encodeURIComponent(ret.code);
 			} else if (response_type === 'token') {	// response_type is 'token' => put access token in url fragment (#)
-				var access = ret.access;
+				let access = ret.access;
 				redirectUrl += '#';
-				var a = [];
-				for (var fld in access)
+				let a:string[] = [];
+				for (let fld in access)
 					a.push(encodeURIComponent(fld) + '=' + encodeURIComponent(access[fld]));
 				redirectUrl += a.join('&');
 			}
@@ -57,11 +64,11 @@ router.post('/login', function(req, res) {
 
 // start password reset process
 // this send a PIN to user's email
-router.post('/sspr', function(req, res) {
-	var data = req.body;
+router.post('/sspr', (req: express.Request, res: express.Response) => {
+	let data = req.body;
 	// data.username
-	var username = data.username;
-	req.client.SSPR(username, function(err, data) {
+	let username = data.username;
+	getClient(req).SSPR(username, (err, data) => {
 		if (err)
 			res.status(400).json(err);
 		else
@@ -70,11 +77,11 @@ router.post('/sspr', function(req, res) {
 });
 
 // reset password
-router.post('/reset_password', function(req, res) {
-	var data = req.body;
+router.post('/reset_password', (req: express.Request, res: express.Response) => {
+	let data = req.body;
 	// data.pin
-	var pin = data.pin;
-	req.client.resetPassword(pin, function(err, data) {
+	let pin = data.pin;
+	getClient(req).resetPassword(pin, (err, data) => {
 		if (err)
 			res.status(400).json(err);
 		else
@@ -83,12 +90,12 @@ router.post('/reset_password', function(req, res) {
 });
 
 // create a new account and sign up for the client app
-router.post('/sign_up_new_user', function(req, res) {
-	var data = req.body;
+router.post('/sign_up_new_user', (req: express.Request, res: express.Response) => {
+	let data = req.body;
 	// data.firstName
-	var firstName = data.firstName;
-	var lastName = data.lastName;
-	var accountOptions = {
+	let firstName = data.firstName;
+	let lastName = data.lastName;
+	let accountOptions = {
 		firstName: data.firstName
 		,lastName: data.lastName
 		,username: data.username
@@ -97,7 +104,7 @@ router.post('/sign_up_new_user', function(req, res) {
 		,mobilePhone: data.mobilePhone
 		,promotionalMaterial: data.promotionalMaterial
 	}
-	req.client.signUpNewUser(accountOptions, function(err, data) {
+	getClient(req).signUpNewUser(accountOptions, (err, data) => {
 		if (err)
 			res.status(400).json(err);
 		else
@@ -105,4 +112,4 @@ router.post('/sign_up_new_user', function(req, res) {
 	});
 });
 
-module.exports = router;
+export {router as Router};

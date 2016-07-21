@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 export class Client {
 	private baseData:any = null;
-	constructor (private authorizeBaseEndpoint:string, private client_id:string, private redirect_uri:string, private client_secret:string) {
+	constructor (private authorizeBaseEndpoint:string, public client_id:string, public redirect_uri:string, public client_secret:string) {
 		this.baseData = {
 			client_id: client_id
 			,redirect_uri: redirect_uri
