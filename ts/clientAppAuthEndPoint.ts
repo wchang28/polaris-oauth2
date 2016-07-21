@@ -1,7 +1,7 @@
 import {getAJaxon} from 'ajaxon';
 let $J = getAJaxon(require('jquery-no-dom'));
 import {IAuthorizeEndpointOptions} from "./appConfig";
-import {IClientAppSettings, AuthResponseType, AccessToken, Access} from './oauth2';
+import {ClientAppSettings, AuthResponseType, AccessToken, Access} from './oauth2';
 
 export interface IConnectedApp {
 	name: string;
@@ -15,7 +15,7 @@ export interface IUser {
 }
 
 export class ClientAppAuthEndPoint {
-	constructor (private options:IAuthorizeEndpointOptions, public clientAppSettings:IClientAppSettings) {}
+	constructor (private options:IAuthorizeEndpointOptions, public clientAppSettings:ClientAppSettings) {}
 	get redirect_uri():string {return this.clientAppSettings.redirect_uri;}
 	getError(httpErr) {
 		if (httpErr) {

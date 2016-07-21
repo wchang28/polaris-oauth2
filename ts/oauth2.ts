@@ -1,4 +1,4 @@
-export interface IClientAppSettings {
+export interface ClientAppSettings {
     client_id:string;
     redirect_uri?:string;   // weak verification for client
     client_secret?:string;  // strong verification for client
@@ -16,7 +16,7 @@ export interface Access extends AccessToken {
 
 export type TokenGrantType = "password" | "refresh_token" | "authorization_code";
 
-export interface ITokenGrantParams extends IClientAppSettings {
+export interface TokenGrantParams extends ClientAppSettings {
     grant_type: TokenGrantType;
     code?: string;  // authorization_code workflow
     refresh_token?: string; // refresh_token 
@@ -26,7 +26,7 @@ export interface ITokenGrantParams extends IClientAppSettings {
 
 export type AuthResponseType = "code" | "token";
 
-export interface IAuthorizationWorkflowParams {
+export interface AuthorizationWorkflowParams {
 	response_type: AuthResponseType;
 	client_id: string;
 	redirect_uri: string;
@@ -34,9 +34,9 @@ export interface IAuthorizationWorkflowParams {
 }
 
 export class TokenGrant {
-    constructor(private jQuery:any, public tokenGrantUrl:string, public clientAppSettings:IClientAppSettings) {}
+    constructor(private jQuery:any, public tokenGrantUrl:string, public clientAppSettings:ClientAppSettings) {}
     getAccessTokenFromAuthCode (code:string, done:(err:any, access: Access) => void) : void {
-        let params: ITokenGrantParams = {
+        let params: TokenGrantParams = {
             grant_type: 'authorization_code'
             ,code: code
             ,client_id: this.clientAppSettings.client_id
@@ -52,7 +52,7 @@ export class TokenGrant {
         });		
     }
     getAccessTokenFromPassword(username:string, password:string, done:(err:any, access: Access) => void) : void {
-        let params: ITokenGrantParams = {
+        let params: TokenGrantParams = {
             grant_type: 'password'
             ,client_id: this.clientAppSettings.client_id
             ,client_secret: this.clientAppSettings.client_secret
@@ -68,7 +68,7 @@ export class TokenGrant {
         });			
     };
     refreshAccessToken(refresh_token:string, done:(err:any, access: Access) => void) : void {
-        let params: ITokenGrantParams = {
+        let params: TokenGrantParams = {
             grant_type: 'refresh_token'
             ,client_id: this.clientAppSettings.client_id
             ,client_secret: this.clientAppSettings.client_secret

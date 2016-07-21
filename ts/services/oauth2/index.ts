@@ -19,13 +19,13 @@ let getGlobal = (req: express.Request) : IGlobal => {return req.app.get('global'
 // grant_type = password || refresh_token || authorization_code
 // POST form data
 router.post('/token', (req: express.Request, res: express.Response) => {
-	let params:oauth2.ITokenGrantParams = req.body;
+	let params:oauth2.TokenGrantParams = req.body;
 	console.log('token grant call. data = ' + JSON.stringify(params));
 	let onError = (err: any) : void => {res.status(400).json(err);}
 	try	{
 		if (params) {
 			if (!params.grant_type) throw err_bad_grant_type;
-			let appSettings: oauth2.IClientAppSettings = {client_id: params.client_id, redirect_uri: params.redirect_uri, client_secret: params.client_secret};
+			let appSettings: oauth2.ClientAppSettings = {client_id: params.client_id, redirect_uri: params.redirect_uri, client_secret: params.client_secret};
 			let ae = new ClientAppAuthEndPoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
 			switch(params.grant_type) {
 				case "password": {
@@ -68,7 +68,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 
 // authorization work flow entry point
 router.get('/authorize', (req: express.Request, res: express.Response) => {
-	let authParams: oauth2.IAuthorizationWorkflowParams = req.query;
+	let authParams: oauth2.AuthorizationWorkflowParams = req.query;
 	console.log('hitting /authorize => ' + JSON.stringify(authParams));
 	let onError = (err:any):void => {
 		let ar:string[] = [];
@@ -80,7 +80,7 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 	if (!response_type || (response_type !== 'code' && response_type !== 'token'))
 		onError(err_bad_response_type);
 	else {
-		let appSettings: oauth2.IClientAppSettings = {client_id: authParams.client_id, redirect_uri: authParams.redirect_uri};
+		let appSettings: oauth2.ClientAppSettings = {client_id: authParams.client_id, redirect_uri: authParams.redirect_uri};
 		let ae = new ClientAppAuthEndPoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
 		ae.getConnectedApp((err:any, connectedApp:any) => {
 			if (err)

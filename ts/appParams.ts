@@ -1,7 +1,7 @@
-import {IAuthorizationWorkflowParams} from './oauth2';
+import {AuthorizationWorkflowParams} from './oauth2';
 
 // application parameters that get passed to the browser app
-export interface IAppParams extends IAuthorizationWorkflowParams {
+export interface IAppParams extends AuthorizationWorkflowParams {
     time_stamp: Date;
 }
 
