@@ -4,7 +4,7 @@ import {ClientAppAuthEndPoint} from '../../clientAppAuthEndPoint';
 import {AES256 as Aes256} from '../aes256';
 import {IGlobal} from '../../global';
 import {IAppParams} from '../../appParams';
-import * as oauth2 from '../../oauth2';
+import * as oauth2 from 'oauth2';
 import * as _ from 'lodash';
 
 let router = express.Router();

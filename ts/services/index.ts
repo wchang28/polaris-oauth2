@@ -8,7 +8,7 @@ import {Router as uiRouter} from './ui';
 import {ClientAppAuthEndPoint} from '../clientAppAuthEndPoint';
 import {VerifyMiddleware as reCaptchaVerifyMiddleware} from './recaptcha';
 import {IAppParams} from '../appParams';
-import * as oauth2 from '../oauth2';
+import * as oauth2 from 'oauth2';
 
 let getGlobal = (req: express.Request) : IGlobal => {return req.app.get('global');}
 

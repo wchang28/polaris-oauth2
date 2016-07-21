@@ -1,7 +1,7 @@
 import {getAJaxon} from 'ajaxon';
 let $J = getAJaxon(require('jquery-no-dom'));
 import {IAuthorizeEndpointOptions} from "./appConfig";
-import * as oauth2 from './oauth2';
+import * as oauth2 from 'oauth2';
 
 export interface IConnectedApp {
 	name: string;

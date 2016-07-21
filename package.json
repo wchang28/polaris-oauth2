@@ -25,6 +25,7 @@
     "lodash": "^4.11.1",
     "multer": "^1.1.0",
     "no-cache-express": "git+https://github.com/wchang28/no-cache-express.git",
+    "oauth2": "git+https://github.com/wchang28/oauth2.git",
     "react": "^0.14.3",
     "react-dom": "^0.14.3"
   },

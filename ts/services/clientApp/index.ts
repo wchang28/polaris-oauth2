@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as core from 'express-serve-static-core';
 import {ClientAppAuthEndPoint, IConnectedApp, IUser} from '../../clientAppAuthEndPoint';
 import {IAppParams} from '../../appParams';
-import * as oauth2 from '../../oauth2';
+import * as oauth2 from 'oauth2';
 
 let router = express.Router();
 
