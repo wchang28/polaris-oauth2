@@ -71,6 +71,7 @@ export class ClientAppAuthEndPoint {
 				,access_token: '98ghqhvra89vajvo834perd9i8237627bgvm'
 			}
 		}
+		done(null, ret);
 	};
 	getAccessFromAuthCode(code:string, done:(err:any, access:oauth2.Access) => void) {
 		let data = {'code' : code};
