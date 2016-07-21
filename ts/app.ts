@@ -23,7 +23,7 @@ let muitipartFormDataParser = upload.single('avatar');
 app.use(muitipartFormDataParser);
 
 // local testing configuraton
-var local_testing_config = JSON.parse(fs.readFileSync(__dirname + '/' + 'local_testing_config.json', 'utf8'));
+var local_testing_config = JSON.parse(fs.readFileSync(__dirname + '/../local_testing_config.json', 'utf8'));
 
 let config:IAppConfig = null;
 // argv[2] is config file
