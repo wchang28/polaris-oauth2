@@ -4,7 +4,9 @@ import {Client} from '../client';
 import {AES256 as Aes256} from '../aes256';
 import {IGlobal} from '../../global';
 import {IAppParams} from '../../appParams';
-import {ITokenGrantParams, IClientAppSettings} from '../../oauth2';
+import {ITokenGrantParams, IClientAppSettings, IAuthorizationWorkflowParams} from '../../oauth2';
+import * as _ from 'lodash';
+
 let router = express.Router();
 
 let err_bad_response_type = {"error": "unsupported_response_type", "error_description":"response type is not supported"};
@@ -65,30 +67,25 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 
 // authorization work flow entry point
 router.get('/authorize', (req: express.Request, res: express.Response) => {
-	let query = req.query;
-	//query.response_type = "code" || "token"
-	//query.client_id
-	//query.redirect_uri
-	//query.state (optional)
-	console.log('hitting /authorize =>' + JSON.stringify(query));
+	let authParams: IAuthorizationWorkflowParams = req.query;
+	console.log('hitting /authorize => ' + JSON.stringify(authParams));
 	let onError = (err:any):void => {
 		let ar:string[] = [];
 		for (let f in err)
 			ar.push(encodeURIComponent(f) + '=' + encodeURIComponent(err[f]));
 		res.status(400).end(ar.join('&'));
 	};
-	let response_type = query.response_type;
-	if (!response_type || response_type.length === 0 || (response_type !== 'code' && response_type !== 'token'))
+	let response_type = authParams.response_type;
+	if (!response_type || (response_type !== 'code' && response_type !== 'token'))
 		onError(err_bad_response_type);
 	else {
-		let appSettings: IClientAppSettings = {client_id: query.client_id, redirect_uri: query.redirect_uri, client_secret: null};
+		let appSettings: IClientAppSettings = {client_id: authParams.client_id, redirect_uri: authParams.redirect_uri};
 		let client = new Client(getGlobal(req).config.authorizeBaseEndpoint, appSettings);
 		client.getConnectedApp((err:any, connectedApp:any) => {
 			if (err)
 				onError(err);
 			else {
-				let params:IAppParams = {client_id: query.client_id, redirect_uri: query.redirect_uri, response_type: query.response_type, time_stamp: new Date()};
-				if (query.state) params.state = query.state;
+				let params:IAppParams = <IAppParams>(_.assignIn({}, authParams, {time_stamp: new Date()}));
 				let aes256 = new Aes256(getGlobal(req).config.cipherSecret);
 				let encryptd = aes256.encrypt(JSON.stringify(params));
 				// redirect user's browser to login screen with app params in the query string

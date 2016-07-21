@@ -23,3 +23,12 @@ export interface ITokenGrantParams extends IClientAppSettings {
     username?: string;  // password workflow
     password?: string;  // password workflow
 }
+
+export type AuthResponseType = "code" | "token";
+
+export interface IAuthorizationWorkflowParams {
+	response_type: AuthResponseType;
+	client_id: string;
+	redirect_uri: string;
+	state?: string;    
+}

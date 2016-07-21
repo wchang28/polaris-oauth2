@@ -1,7 +1,7 @@
 import {getAJaxon} from 'ajaxon';
 let $J = getAJaxon(require('jquery-no-dom'));
 import * as _ from 'lodash';
-import {IClientAppSettings} from '../oauth2';
+import {IClientAppSettings, AuthResponseType} from '../oauth2';
 
 export class Client {
 	constructor (private authorizeBaseEndpoint:string, public appSettings:IClientAppSettings) {}
@@ -31,7 +31,7 @@ export class Client {
 			if (typeof done === 'function') done(this.getError(err), client);
 		});
 	}
-	userLogin(response_type:string, username:string, password:string, signUpUser:boolean, done:(err:any, ret:any) => void) {
+	userLogin(response_type:AuthResponseType, username:string, password:string, signUpUser:boolean, done:(err:any, ret:any) => void) {
 		let data = _.assignIn({}, this.appSettings, {'response_type' : response_type, 'username': username, 'password': password, 'signUpUser': signUpUser});
 		this.$P("/services/authorize/login", data, (err, ret) => {
 			if (typeof done === 'function') done(this.getError(err), ret);
