@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as core from 'express-serve-static-core';
-import {ClientAppAuthEndPoint, IConnectedApp, IUser} from '../../clientAppAuthEndPoint';
+import {ClientAppAuthEndPoint, IConnectedApp, IAuthorizedUser} from '../../clientAppAuthEndPoint';
 import {IAppParams} from '../../appParams';
 import * as oauth2 from 'oauth2';
 
@@ -20,7 +20,7 @@ router.post('/get_connected_app', (req: express.Request, res: express.Response) 
 
 router.post('/verify_token', (req: express.Request, res: express.Response) => {
 	let accessToken: oauth2.AccessToken = req.body;
-	getAuthorizationEndPoint(req).verifyAccessToken(accessToken, (err:any, user:IUser) => {
+	getAuthorizationEndPoint(req).verifyAccessToken(accessToken, (err:any, user:IAuthorizedUser) => {
 		if (err)
 			res.status(400).json(err);
 		else

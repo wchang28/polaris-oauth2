@@ -9,7 +9,7 @@ export interface IConnectedApp {
 	allow_create_new_user: boolean;
 }
 
-export interface IUser {
+export interface IAuthorizedUser {
 	userId: string;
 	userName: string;
 }
@@ -63,7 +63,7 @@ export class ClientAppAuthEndPoint {
 			if (typeof done === 'function') done(this.getError(err), access);
 		});
 	};
-	verifyAccessToken(accessToken: oauth2.AccessToken, done:(err:any, user:IUser) => void) {
+	verifyAccessToken(accessToken: oauth2.AccessToken, done:(err:any, user:IAuthorizedUser) => void) {
 		let data = accessToken;
 		this.$P("/services/authorize/verify_token", data, (err, user) => {
 			if (typeof done === 'function') done(this.getError(err), user);
