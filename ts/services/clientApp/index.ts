@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as core from 'express-serve-static-core';
-import {ClientAppAuthEndPoint, IConnectedApp, IAuthorizedUser} from '../../clientAppAuthEndPoint';
+import {ClientAppAuthEndPoint, IConnectedApp, IAuthorizedUser, ILoginResult} from '../../clientAppAuthEndPoint';
 import {IAppParams} from '../../appParams';
 import * as oauth2 from 'oauth2';
 
@@ -49,7 +49,7 @@ router.post('/login', (req: express.Request, res: express.Response) => {
 	let signUpUserForApp = (data.signUpUserForApp ? true : false);
 	let params = getAppParams(req);
 	let response_type = params.response_type;
-	getAuthorizationEndPoint(req).userLogin(response_type, false, true, data.username, data.password, signUpUserForApp, (err:any, ret) => {
+	getAuthorizationEndPoint(req).userLogin(response_type, false, true, data.username, data.password, signUpUserForApp, (err:any, ret: ILoginResult) => {
 		if (err)
 			res.status(400).json(err);
 		else {

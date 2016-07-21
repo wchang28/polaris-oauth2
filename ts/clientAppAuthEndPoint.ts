@@ -14,6 +14,12 @@ export interface IAuthorizedUser {
 	userName: string;
 }
 
+export interface ILoginResult {
+	user: IAuthorizedUser;
+	access?: oauth2.Access;
+	code?:string;
+}
+
 export class ClientAppAuthEndPoint {
 	constructor (private options:IAuthorizeEndpointOptions, public clientAppSettings:oauth2.ClientAppSettings) {}
 	get redirect_uri():string {return this.clientAppSettings.redirect_uri;}
@@ -45,9 +51,9 @@ export class ClientAppAuthEndPoint {
 			if (typeof done === 'function') done(this.getError(err), connectedApp);
 		});
 	}
-	userLogin(response_type:oauth2.AuthResponseType, requireClientSecret: boolean, requireRedirectUrl: boolean, username:string, password:string, signUpUserForApp:boolean, done:(err:any, ret:any) => void) {
+	userLogin(response_type:oauth2.AuthResponseType, requireClientSecret: boolean, requireRedirectUrl: boolean, username:string, password:string, signUpUserForApp:boolean, done:(err:any, ret:ILoginResult) => void) {
 		let data = {'response_type' : response_type, 'requireClientSecret': requireClientSecret, 'requireRedirectUrl': requireRedirectUrl, 'username': username, 'password': password, 'signUpUserForApp': signUpUserForApp};
-		this.$P("/services/authorize/login", data, (err, ret) => {
+		this.$P("/services/authorize/login", data, (err, ret: ILoginResult) => {
 			if (typeof done === 'function') done(this.getError(err), ret);
 		});
 	};

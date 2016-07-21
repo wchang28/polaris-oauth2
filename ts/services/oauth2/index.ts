@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as core from 'express-serve-static-core';
-import {ClientAppAuthEndPoint} from '../../clientAppAuthEndPoint';
+import {ClientAppAuthEndPoint, ILoginResult} from '../../clientAppAuthEndPoint';
 import {AES256 as Aes256} from '../aes256';
 import {IGlobal} from '../../global';
 import {IAppParams} from '../../appParams';
@@ -29,7 +29,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 			let ae = new ClientAppAuthEndPoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
 			switch(params.grant_type) {
 				case "password": {
-					ae.userLogin('token', true, false, params.username, params.password, false, (err, ret) => {
+					ae.userLogin('token', true, false, params.username, params.password, false, (err:any, ret: ILoginResult) => {
 						if (err)
 							onError(err);
 						else
@@ -38,7 +38,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 					break;
 				}
 				case "refresh_token": {
-					ae.refreshToken(params.refresh_token, (err, access:oauth2.Access) => {
+					ae.refreshToken(params.refresh_token, (err:any, access:oauth2.Access) => {
 						if (err)
 							onError(err);
 						else
@@ -47,7 +47,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 					break;
 				}
 				case "authorization_code": {
-					ae.getAccessFromAuthCode(params.code, (err, access:oauth2.Access) => {
+					ae.getAccessFromAuthCode(params.code, (err:any, access:oauth2.Access) => {
 						if (err)
 							onError(err);
 						else
