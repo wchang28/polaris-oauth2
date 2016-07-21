@@ -407,7 +407,7 @@ var OAuth2LoginApp = React.createClass({
 	}
 });
 
-$J('POST', '/services/client/get_client', {p: p}, (err, client) => {
+$J('POST', '/services/client/get_connected_app', {p: p}, (err, client) => {
 	if (!err) {
 		connectedApp = client;
 

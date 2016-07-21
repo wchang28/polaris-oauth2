@@ -4,7 +4,7 @@ import {ClientAppAuthEndPoint} from '../../clientAppAuthEndPoint';
 import {AES256 as Aes256} from '../aes256';
 import {IGlobal} from '../../global';
 import {IAppParams} from '../../appParams';
-import {ITokenGrantParams, IClientAppSettings, IAuthorizationWorkflowParams} from '../../oauth2';
+import * as oauth2 from '../../oauth2';
 import * as _ from 'lodash';
 
 let router = express.Router();
@@ -19,16 +19,17 @@ let getGlobal = (req: express.Request) : IGlobal => {return req.app.get('global'
 // grant_type = password || refresh_token || authorization_code
 // POST form data
 router.post('/token', (req: express.Request, res: express.Response) => {
-	let data:ITokenGrantParams = req.body;
-	console.log('token grant call. data = ' + JSON.stringify(data));
+	let params:oauth2.ITokenGrantParams = req.body;
+	console.log('token grant call. data = ' + JSON.stringify(params));
 	let onError = (err: any) : void => {res.status(400).json(err);}
 	try	{
-		if (data) {
-			if (!data.grant_type) throw err_bad_grant_type;
-			let ae = new ClientAppAuthEndPoint(getGlobal(req).config.authorizeBaseEndpoint, data);
-			switch(data.grant_type) {
+		if (params) {
+			if (!params.grant_type) throw err_bad_grant_type;
+			let appSettings: oauth2.IClientAppSettings = {client_id: params.client_id, redirect_uri: params.redirect_uri, client_secret: params.client_secret};
+			let ae = new ClientAppAuthEndPoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
+			switch(params.grant_type) {
 				case "password": {
-					ae.userLogin('token', true, data.username, data.password, false, (err, ret) => {
+					ae.userLogin('token', true, false, params.username, params.password, false, (err, ret) => {
 						if (err)
 							onError(err);
 						else
@@ -37,7 +38,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 					break;
 				}
 				case "refresh_token": {
-					ae.refreshToken(data.refresh_token, (err, access) => {
+					ae.refreshToken(params.refresh_token, (err, access:oauth2.Access) => {
 						if (err)
 							onError(err);
 						else
@@ -46,7 +47,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 					break;
 				}
 				case "authorization_code": {
-					ae.getAccessFromAuthCode(data.code, (err, access) => {
+					ae.getAccessFromAuthCode(params.code, (err, access:oauth2.Access) => {
 						if (err)
 							onError(err);
 						else
@@ -67,7 +68,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 
 // authorization work flow entry point
 router.get('/authorize', (req: express.Request, res: express.Response) => {
-	let authParams: IAuthorizationWorkflowParams = req.query;
+	let authParams: oauth2.IAuthorizationWorkflowParams = req.query;
 	console.log('hitting /authorize => ' + JSON.stringify(authParams));
 	let onError = (err:any):void => {
 		let ar:string[] = [];
@@ -79,8 +80,8 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 	if (!response_type || (response_type !== 'code' && response_type !== 'token'))
 		onError(err_bad_response_type);
 	else {
-		let appSettings: IClientAppSettings = {client_id: authParams.client_id, redirect_uri: authParams.redirect_uri};
-		let ae = new ClientAppAuthEndPoint(getGlobal(req).config.authorizeBaseEndpoint, appSettings);
+		let appSettings: oauth2.IClientAppSettings = {client_id: authParams.client_id, redirect_uri: authParams.redirect_uri};
+		let ae = new ClientAppAuthEndPoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
 		ae.getConnectedApp((err:any, connectedApp:any) => {
 			if (err)
 				onError(err);

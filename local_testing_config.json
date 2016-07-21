@@ -9,7 +9,11 @@
 	}
 	,"companyName": "Polaris"
 	,"cipherSecret": "bnegr9he4q53490"
-	,"authorizeBaseEndpoint": "http://127.0.0.1:82"
+	,"authorizeEndpointOptions":
+	{
+		 "baseUrl": "http://127.0.0.1:82"
+		 ,"rejectUnauthorized": false
+	}
 	,"reCaptchaSettings":
 	{
 		"siteKey": "6LdSMx8TAAAAAARCvQT57WDNQq5m_qWN61Cn0D9Q"

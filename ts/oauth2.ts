@@ -1,7 +1,7 @@
 export interface IClientAppSettings {
     client_id:string;
-    redirect_uri?:string;
-    client_secret?:string;
+    redirect_uri?:string;   // weak verification for client
+    client_secret?:string;  // strong verification for client
 }
 
 export interface AccessToken {
