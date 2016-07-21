@@ -7,10 +7,10 @@ import {Router as clientAppRouter} from './clientApp';
 import {Router as uiRouter} from './ui';
 import {Client} from './client';
 import {VerifyMiddleware as reCaptchaVerifyMiddleware} from './recaptcha';
+import {IAppParams} from '../appParams';
+import {IClientAppSettings} from '../oauth2';
 
-function getGlobal(req: express.Request) : IGlobal {
-    return req.app.get('global');
-}
+let getGlobal = (req: express.Request) : IGlobal => {return req.app.get('global');}
 
 let router = express.Router();
 
@@ -22,11 +22,10 @@ function clientMiddleware(req: express.Request, res: express.Response, next: exp
 	let data = req.body;
 	// data.p
 	let aes256 = new Aes256(config.cipherSecret);
-	let params = JSON.parse(aes256.decrypt(data.p));
-	let client_id = params.client_id;
-	let redirect_uri = params.redirect_uri;
+	let params:IAppParams = JSON.parse(aes256.decrypt(data.p));
 	req["parameters"] = params;
-    req["client"] = new Client(config.authorizeBaseEndpoint, client_id, redirect_uri, null);
+	let appSettings: IClientAppSettings = {client_id: params.client_id, redirect_uri: params.redirect_uri, client_secret: null};
+    req["client"] = new Client(config.authorizeBaseEndpoint, appSettings);
 	next();
 }
 

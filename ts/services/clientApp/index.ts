@@ -1,12 +1,12 @@
 import * as express from 'express';
 import * as core from 'express-serve-static-core';
 import {Client} from '../client';
+import {IAppParams} from '../../appParams';
 
 let router = express.Router();
 
-function getClient(req: express.Request) : Client {
-	return req["client"];
-}
+let getClient = (req: express.Request) : Client => {return req["client"]};
+let getAppParams = (req: express.Request) : IAppParams => {return req["parameters"]};
 
 router.post('/get_client', (req: express.Request, res: express.Response) => {
 	getClient(req).getConnectedApp((err, connectedApp) => {
@@ -36,7 +36,7 @@ router.post('/login', (req: express.Request, res: express.Response) => {
 	//console.log(JSON.stringify(data));
 	// data.username, data.password, data.signUpUser
 	let signUpUser = (data.signUpUser ? true : false);
-	let params = req["parameters"];
+	let params = getAppParams(req);
 	let response_type = params.response_type;
 	getClient(req).userLogin(response_type, data.username, data.password, signUpUser, (err, ret) => {
 		if (err)

@@ -3,28 +3,27 @@ import * as core from 'express-serve-static-core';
 import {Client} from '../client';
 import {AES256 as Aes256} from '../aes256';
 import {IGlobal} from '../../global';
-
+import {IAppParams} from '../../appParams';
+import {ITokenGrantParams, IClientAppSettings} from '../../oauth2';
 let router = express.Router();
 
 let err_bad_response_type = {"error": "unsupported_response_type", "error_description":"response type is not supported"};
 let err_bad_grant_type = {"error": "unsupported_grant_type", "error_description":"grant type not supported"};
 
-function getGlobal(req: express.Request) : IGlobal {
-    return req.app.get('global');
-}
+let getGlobal = (req: express.Request) : IGlobal => {return req.app.get('global');}
 
 // token grant handler
 // this handler always returns http status code of 400 if there is some sort of error
 // grant_type = password || refresh_token || authorization_code
 // POST form data
 router.post('/token', (req: express.Request, res: express.Response) => {
-	let data = req.body;
+	let data:ITokenGrantParams = req.body;
 	console.log('token grant call. data = ' + JSON.stringify(data));
 	let onError = (err: any) : void => {res.status(400).json(err);}
 	try	{
 		if (data) {
-			if (!data.grant_type || data.grant_type.length == 0) throw err_bad_grant_type;
-			let client = new Client(getGlobal(req).config.authorizeBaseEndpoint, data.client_id, data.redirect_uri, data.client_secret);
+			if (!data.grant_type) throw err_bad_grant_type;
+			let client = new Client(getGlobal(req).config.authorizeBaseEndpoint, data);
 			switch(data.grant_type) {
 				case "password": {
 					client.userLogin('token', data.username, data.password, false, (err, ret) => {
@@ -82,16 +81,17 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 	if (!response_type || response_type.length === 0 || (response_type !== 'code' && response_type !== 'token'))
 		onError(err_bad_response_type);
 	else {
-		var client = new Client(getGlobal(req).config.authorizeBaseEndpoint, query.client_id, query.redirect_uri, null);
-		client.getConnectedApp(function(err, connectedApp) {
+		let appSettings: IClientAppSettings = {client_id: query.client_id, redirect_uri: query.redirect_uri, client_secret: null};
+		let client = new Client(getGlobal(req).config.authorizeBaseEndpoint, appSettings);
+		client.getConnectedApp((err:any, connectedApp:any) => {
 			if (err)
 				onError(err);
 			else {
-				let params = {client_id: query.client_id, redirect_uri: query.redirect_uri, response_type: query.response_type, time_stamp: new Date()};
-				if (query.state) params['state'] = query.state;
+				let params:IAppParams = {client_id: query.client_id, redirect_uri: query.redirect_uri, response_type: query.response_type, time_stamp: new Date()};
+				if (query.state) params.state = query.state;
 				let aes256 = new Aes256(getGlobal(req).config.cipherSecret);
 				let encryptd = aes256.encrypt(JSON.stringify(params));
-				// redirect user's browser to login screen
+				// redirect user's browser to login screen with app params in the query string
 				let redirectUrl = '../../login' + '?p=' + encodeURIComponent(encryptd);
 				res.redirect(redirectUrl);
 			}
