@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as core from 'express-serve-static-core';
-import {Client} from '../client';
+import {AuthorizationEndPoint} from '../authEndPoint';
 import {AES256 as Aes256} from '../aes256';
 import {IGlobal} from '../../global';
 import {IAppParams} from '../../appParams';
@@ -25,10 +25,10 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 	try	{
 		if (data) {
 			if (!data.grant_type) throw err_bad_grant_type;
-			let client = new Client(getGlobal(req).config.authorizeBaseEndpoint, data);
+			let ae = new AuthorizationEndPoint(getGlobal(req).config.authorizeBaseEndpoint, data);
 			switch(data.grant_type) {
 				case "password": {
-					client.userLogin('token', data.username, data.password, false, (err, ret) => {
+					ae.userLogin('token', true, data.username, data.password, (err, ret) => {
 						if (err)
 							onError(err);
 						else
@@ -37,7 +37,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 					break;
 				}
 				case "refresh_token": {
-					client.refreshToken(data.refresh_token, (err, access) => {
+					ae.refreshToken(data.refresh_token, (err, access) => {
 						if (err)
 							onError(err);
 						else
@@ -46,7 +46,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 					break;
 				}
 				case "authorization_code": {
-					client.getAccessFromAuthCode(data.code, (err, access) => {
+					ae.getAccessFromAuthCode(data.code, (err, access) => {
 						if (err)
 							onError(err);
 						else
@@ -80,8 +80,8 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 		onError(err_bad_response_type);
 	else {
 		let appSettings: IClientAppSettings = {client_id: authParams.client_id, redirect_uri: authParams.redirect_uri};
-		let client = new Client(getGlobal(req).config.authorizeBaseEndpoint, appSettings);
-		client.getConnectedApp((err:any, connectedApp:any) => {
+		let ae = new AuthorizationEndPoint(getGlobal(req).config.authorizeBaseEndpoint, appSettings);
+		ae.getConnectedApp((err:any, connectedApp:any) => {
 			if (err)
 				onError(err);
 			else {

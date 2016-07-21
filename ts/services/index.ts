@@ -5,7 +5,7 @@ import {IGlobal} from '../global';
 import {Router as oauth2Router} from './oauth2';
 import {Router as clientAppRouter} from './clientApp';
 import {Router as uiRouter} from './ui';
-import {Client} from './client';
+import {AuthorizationEndPoint} from './authEndPoint';
 import {VerifyMiddleware as reCaptchaVerifyMiddleware} from './recaptcha';
 import {IAppParams} from '../appParams';
 import {IClientAppSettings} from '../oauth2';
@@ -25,7 +25,7 @@ function clientMiddleware(req: express.Request, res: express.Response, next: exp
 	let params:IAppParams = JSON.parse(aes256.decrypt(data.p));
 	req["parameters"] = params;
 	let appSettings: IClientAppSettings = {client_id: params.client_id, redirect_uri: params.redirect_uri};
-    req["client"] = new Client(config.authorizeBaseEndpoint, appSettings);
+    req["authEndPoint"] = new AuthorizationEndPoint(config.authorizeBaseEndpoint, appSettings);
 	next();
 }
 

@@ -1,15 +1,15 @@
 import * as express from 'express';
 import * as core from 'express-serve-static-core';
-import {Client} from '../client';
+import {AuthorizationEndPoint} from '../authEndPoint';
 import {IAppParams} from '../../appParams';
 
 let router = express.Router();
 
-let getClient = (req: express.Request) : Client => {return req["client"]};
+let getAuthorizationEndPoint = (req: express.Request) : AuthorizationEndPoint => {return req["authEndPoint"]};
 let getAppParams = (req: express.Request) : IAppParams => {return req["parameters"]};
 
 router.post('/get_client', (req: express.Request, res: express.Response) => {
-	getClient(req).getConnectedApp((err, connectedApp) => {
+	getAuthorizationEndPoint(req).getConnectedApp((err, connectedApp) => {
 		if (err)
 			res.status(400).json(err);
 		else
@@ -21,7 +21,7 @@ router.post('/lookup_user', (req: express.Request, res: express.Response) => {
 	let data = req.body;
 	// data.username
 	let username = data.username;
-	getClient(req).lookupUser(username, (err, data) => {
+	getAuthorizationEndPoint(req).lookupUser(username, (err, data) => {
 		if (err)
 			res.status(400).json(err);
 		else
@@ -34,16 +34,15 @@ router.post('/login', (req: express.Request, res: express.Response) => {
 	console.log('hitting /login');
 	let data = req.body;
 	//console.log(JSON.stringify(data));
-	// data.username, data.password, data.signUpUser
-	let signUpUser = (data.signUpUser ? true : false);
+	// data.username, data.password
 	let params = getAppParams(req);
 	let response_type = params.response_type;
-	getClient(req).userLogin(response_type, data.username, data.password, signUpUser, (err, ret) => {
+	getAuthorizationEndPoint(req).userLogin(response_type, false, data.username, data.password, (err, ret) => {
 		if (err)
 			res.status(400).json(err);
 		else {
 			let user = ret.user;
-			let redirectUrl = getClient(req).redirect_uri;
+			let redirectUrl = getAuthorizationEndPoint(req).redirect_uri;
 			if (response_type === 'code') {	// response_type is auth code => put auth code in url query string
 				redirectUrl += '?code=' + encodeURIComponent(ret.code);
 			} else if (response_type === 'token') {	// response_type is 'token' => put access token in url fragment (#)
@@ -68,7 +67,7 @@ router.post('/sspr', (req: express.Request, res: express.Response) => {
 	let data = req.body;
 	// data.username
 	let username = data.username;
-	getClient(req).SSPR(username, (err, data) => {
+	getAuthorizationEndPoint(req).SSPR(username, (err, data) => {
 		if (err)
 			res.status(400).json(err);
 		else
@@ -81,7 +80,7 @@ router.post('/reset_password', (req: express.Request, res: express.Response) => 
 	let data = req.body;
 	// data.pin
 	let pin = data.pin;
-	getClient(req).resetPassword(pin, (err, data) => {
+	getAuthorizationEndPoint(req).resetPassword(pin, (err, data) => {
 		if (err)
 			res.status(400).json(err);
 		else
@@ -104,7 +103,7 @@ router.post('/sign_up_new_user', (req: express.Request, res: express.Response) =
 		,mobilePhone: data.mobilePhone
 		,promotionalMaterial: data.promotionalMaterial
 	}
-	getClient(req).signUpNewUser(accountOptions, (err, data) => {
+	getAuthorizationEndPoint(req).signUpNewUser(accountOptions, (err, data) => {
 		if (err)
 			res.status(400).json(err);
 		else
