@@ -51,11 +51,26 @@ export class ClientAppAuthEndPoint {
 			if (typeof done === 'function') done(this.getError(err), connectedApp);
 		});
 	}
+	/*
 	userLogin(response_type:oauth2.AuthResponseType, requireClientSecret: boolean, requireRedirectUrl: boolean, username:string, password:string, signUpUserForApp:boolean, done:(err:any, ret:ILoginResult) => void) {
 		let data = {'response_type' : response_type, 'requireClientSecret': requireClientSecret, 'requireRedirectUrl': requireRedirectUrl, 'username': username, 'password': password, 'signUpUserForApp': signUpUserForApp};
 		this.$P("/services/authorize/login", data, (err, ret: ILoginResult) => {
 			if (typeof done === 'function') done(this.getError(err), ret);
 		});
+	};
+	*/
+	// TODO: remove test code
+	userLogin(response_type:oauth2.AuthResponseType, requireClientSecret: boolean, requireRedirectUrl: boolean, username:string, password:string, signUpUserForApp:boolean, done:(err:any, ret:ILoginResult) => void) {
+		let ret: ILoginResult = {
+			user: {
+				userId: 'gkfklgnh965yu690u50hj0j0j6'
+				,userName: username
+			}
+			,access: {
+				token_type: 'Bearer'
+				,access_token: '98ghqhvra89vajvo834perd9i8237627bgvm'
+			}
+		}
 	};
 	getAccessFromAuthCode(code:string, done:(err:any, access:oauth2.Access) => void) {
 		let data = {'code' : code};
