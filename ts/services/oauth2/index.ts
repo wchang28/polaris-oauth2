@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as core from 'express-serve-static-core';
-import {AuthorizationEndPoint} from '../../authEndPoint';
+import {ClientAppAuthEndPoint} from '../../clientAppAuthEndPoint';
 import {AES256 as Aes256} from '../aes256';
 import {IGlobal} from '../../global';
 import {IAppParams} from '../../appParams';
@@ -25,7 +25,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 	try	{
 		if (data) {
 			if (!data.grant_type) throw err_bad_grant_type;
-			let ae = new AuthorizationEndPoint(getGlobal(req).config.authorizeBaseEndpoint, data);
+			let ae = new ClientAppAuthEndPoint(getGlobal(req).config.authorizeBaseEndpoint, data);
 			switch(data.grant_type) {
 				case "password": {
 					ae.userLogin('token', true, data.username, data.password, false, (err, ret) => {
@@ -80,7 +80,7 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 		onError(err_bad_response_type);
 	else {
 		let appSettings: IClientAppSettings = {client_id: authParams.client_id, redirect_uri: authParams.redirect_uri};
-		let ae = new AuthorizationEndPoint(getGlobal(req).config.authorizeBaseEndpoint, appSettings);
+		let ae = new ClientAppAuthEndPoint(getGlobal(req).config.authorizeBaseEndpoint, appSettings);
 		ae.getConnectedApp((err:any, connectedApp:any) => {
 			if (err)
 				onError(err);

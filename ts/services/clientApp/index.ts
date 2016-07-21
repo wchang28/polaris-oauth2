@@ -1,11 +1,11 @@
 import * as express from 'express';
 import * as core from 'express-serve-static-core';
-import {AuthorizationEndPoint} from '../../authEndPoint';
+import {ClientAppAuthEndPoint} from '../../clientAppAuthEndPoint';
 import {IAppParams} from '../../appParams';
 
 let router = express.Router();
 
-let getAuthorizationEndPoint = (req: express.Request) : AuthorizationEndPoint => {return req["authEndPoint"]};
+let getAuthorizationEndPoint = (req: express.Request) : ClientAppAuthEndPoint => {return req["authEndPoint"]};
 let getAppParams = (req: express.Request) : IAppParams => {return req["parameters"]};
 
 router.post('/get_client', (req: express.Request, res: express.Response) => {

@@ -3,7 +3,7 @@ let $J = getAJaxon(require('jquery-no-dom'));
 import * as _ from 'lodash';
 import {IClientAppSettings, AuthResponseType} from './oauth2';
 
-export class AuthorizationEndPoint {
+export class ClientAppAuthEndPoint {
 	constructor (private authorizeBaseEndpoint:string, public clientAppSettings:IClientAppSettings) {}
 	get redirect_uri():string {return this.clientAppSettings.redirect_uri;}
 	getError(httpErr) {
