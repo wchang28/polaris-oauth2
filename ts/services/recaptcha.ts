@@ -1,9 +1,9 @@
 import * as express from 'express';
 import * as core from 'express-serve-static-core';
 import {IGlobal} from '../global';
-var $ = require('jquery-no-dom');
+let $ = require('jquery-no-dom');
 
-var err_captcha_err = {"error": "captcha_error", "error_description":"captcha cannot verify user is a real person"};
+let err_captcha_err = {"error": "captcha_error", "error_description":"captcha cannot verify user is a real person"};
 
 function getGlobal(req: express.Request) : IGlobal {
     return req.app.get('global');

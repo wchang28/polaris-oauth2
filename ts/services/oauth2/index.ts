@@ -6,8 +6,8 @@ import {IGlobal} from '../../global';
 
 let router = express.Router();
 
-var err_bad_response_type = {"error": "unsupported_response_type", "error_description":"response type is not supported"};
-var err_bad_grant_type = {"error": "unsupported_grant_type", "error_description":"grant type not supported"};
+let err_bad_response_type = {"error": "unsupported_response_type", "error_description":"response type is not supported"};
+let err_bad_grant_type = {"error": "unsupported_grant_type", "error_description":"grant type not supported"};
 
 function getGlobal(req: express.Request) : IGlobal {
     return req.app.get('global');
