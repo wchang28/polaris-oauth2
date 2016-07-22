@@ -17,18 +17,21 @@ let router = express.Router();
 router.use('/oauth2', oauth2Router);
 router.use('/ui', uiRouter);
 
-function clientMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
-    let config = getGlobal(req).config;
-	let data = req.body;
-	// data.p
-	let aes256 = new Aes256(config.cipherSecret);
-	let params:IAppParams = JSON.parse(aes256.decrypt(data.p));
-	req["parameters"] = params;
-	let appSettings: oauth2.ClientAppSettings = {client_id: params.client_id, redirect_uri: params.redirect_uri};
-    req["authEndPoint"] = new ClientAppAuthEndPoint(config.authorizeEndpointOptions, appSettings);
-	next();
+function clientAppCallMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
+	let p = req.headers['x-p'];
+	if (p) {
+		let config = getGlobal(req).config;
+		let aes256 = new Aes256(config.cipherSecret);
+		let params:IAppParams = JSON.parse(aes256.decrypt(p));
+		req["parameters"] = params;
+		let appSettings: oauth2.ClientAppSettings = {client_id: params.client_id, redirect_uri: params.redirect_uri};
+		req["authEndPoint"] = new ClientAppAuthEndPoint(config.authorizeEndpointOptions, appSettings);
+		next();
+	} else {
+		res.status(400).json({'error': 'bad-request', 'error_description': 'bad request'});
+	}
 }
 
-router.use('/client', reCaptchaVerifyMiddleware, clientMiddleware, clientAppRouter);
+router.use('/client', reCaptchaVerifyMiddleware, clientAppCallMiddleware, clientAppRouter);
 
 export {router as Router};

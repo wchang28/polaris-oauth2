@@ -45,8 +45,7 @@ var Login = React.createClass({
 			alert('username and password are required');
 		} else {
 			var data = {
-				p: this.props.p
-				,username: username
+				username: username
 				,password: password
 				,signUpUserForApp: false
 			};
@@ -56,7 +55,7 @@ var Login = React.createClass({
 				else {
 					window.location.replace(ret.redirect_url);
 				}
-			});
+			}, {'x-p': this.props.p});
 		}
 	},
 	render: function() {
@@ -95,8 +94,7 @@ var ResetPasswordSendPin = React.createClass({
 			alert('Email is required');
 		} else {
 			var data = {
-				p: this.props.p
-				,username: email
+				username: email
 			};
 			$J('POST', '/services/client/sspr', data, function(err, ret) {
 				if (err)
@@ -105,7 +103,7 @@ var ResetPasswordSendPin = React.createClass({
 					__global.passwordResetPINEmail = email;
 					window.location.hash = "#reset_pswd_enter_pin";
 				}
-			});
+			}, {'x-p': this.props.p});
 		}
 	},
 	render: function() {
@@ -142,8 +140,7 @@ var ResetPasswordEnterPin = React.createClass({
 			alert('PIN number is required');
 		} else {
 			var data = {
-				p: this.props.p
-				,pin: pin
+				pin: pin
 			};
 			$J('POST', '/services/client/reset_password', data, function(err, ret) {
 				if (err)
@@ -152,7 +149,7 @@ var ResetPasswordEnterPin = React.createClass({
 					__global.temporaryPassword = ret.temporaryPassword;
 					window.location.hash = "#reset_pswd_done";
 				}
-			});
+			}, {'x-p': this.props.p});
 		}
 	},
 	render: function() {
@@ -212,8 +209,7 @@ var SingUpCheck = React.createClass({
 				alert('invalid email address');
 			else {
 				var data = {
-					p: this.props.p
-					,username: email
+					username: email
 				};
 				$J('POST', '/services/client/lookup_user', data, function(err, ret) {
 					if (err)
@@ -225,7 +221,7 @@ var SingUpCheck = React.createClass({
 						else
 							window.location.hash = "#create_account";
 					}
-				});
+				}, {'x-p': this.props.p});
 			}
 		}
 	},
@@ -263,8 +259,7 @@ var SignUpAndLogin = React.createClass({
 			alert('password are required');
 		} else {
 			var data = {
-				p: this.props.p
-				,username: __global.signupEmail
+				username: __global.signupEmail
 				,password: password
 				,signUpUserForApp: true
 			};
@@ -274,7 +269,7 @@ var SignUpAndLogin = React.createClass({
 				else {
 					window.location.replace(ret.redirect_url);
 				}
-			});
+			}, {'x-p': this.props.p});
 		}
 	},
 	render: function() {
@@ -350,8 +345,7 @@ var CreateAccount = React.createClass({
 			alert('Last name is required');
 		else {
 			var data = {
-				p: this.props.p
-				,username: email
+				username: email
 				,password: password
 				,firstName: firstName
 				,lastName: lastName
@@ -367,7 +361,7 @@ var CreateAccount = React.createClass({
 					alert(JSON.stringify(ret));
 					window.location.replace('https://www.yahoo.com/');
 				}
-			});
+			}, {'x-p': this.props.p});
 		}
 	},
 	render: function() {
@@ -418,15 +412,16 @@ var OAuth2LoginApp = React.createClass({
 	}
 });
 
-$J('POST', '/services/client/get_connected_app', {p: getParameterByName('p')}, (err:any, connectedApp: IConnectedApp) => {
+let __p = getParameterByName('p');
+
+$J('POST', '/services/client/get_connected_app', {}, (err:any, connectedApp: IConnectedApp) => {
 	if (!err) {
 		let mode = "login";
-		let p = getParameterByName('p');
-		ReactDOM.render(<OAuth2LoginApp mode={mode} connectedApp={connectedApp} p={p}/>, document.getElementById('main'));
+		ReactDOM.render(<OAuth2LoginApp mode={mode} connectedApp={connectedApp} p={__p}/>, document.getElementById('main'));
 		$(window).on('hashchange', function() {
 			//alert('hash change');
 			mode = (window.location.hash.length > 0 ? window.location.hash.substr(1) : 'login');
-			ReactDOM.render(<OAuth2LoginApp mode={mode} connectedApp={connectedApp} p={p}/>, document.getElementById('main'));
+			ReactDOM.render(<OAuth2LoginApp mode={mode} connectedApp={connectedApp} p={__p}/>, document.getElementById('main'));
 		});
 	}
-});
+}, {'x-p': __p});
