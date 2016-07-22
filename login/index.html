@@ -7,8 +7,8 @@
 	<link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
 	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 	<script type="application/javascript">
-		var appSettings = null;
-		function parseSettings(settings) {appSettings = settings;}
+		var __appSettings = null;
+		function parseSettings(settings) {__appSettings = settings;}
 	</script>
 	<script src="/services/ui/get_settings?cb=parseSettings"></script>
 	<body>

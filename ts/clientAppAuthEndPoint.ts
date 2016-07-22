@@ -2,23 +2,7 @@ import {getAJaxon} from 'ajaxon';
 let $J = getAJaxon(require('jquery-no-dom'));
 import {IAuthorizeEndpointOptions} from "./appConfig";
 import * as oauth2 from 'oauth2';
-
-export interface IConnectedApp {
-	name: string;
-	allow_reset_pswd: boolean;
-	allow_create_new_user: boolean;
-}
-
-export interface IAuthorizedUser {
-	userId: string;
-	userName: string;
-}
-
-export interface ILoginResult {
-	user: IAuthorizedUser;
-	access?: oauth2.Access;
-	code?:string;
-}
+import {IConnectedApp, IAuthorizedUser, ILoginResult} from './authInterfaces';
 
 export class ClientAppAuthEndPoint {
 	constructor (private options:IAuthorizeEndpointOptions, public clientAppSettings:oauth2.ClientAppSettings) {}

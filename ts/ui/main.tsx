@@ -1,9 +1,14 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-var $ = require('jquery');
-var $J = require('ajaxon')($);
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import * as $ from 'jquery';
+import {getAJaxon} from 'ajaxon';
+let $J = getAJaxon($);
+import {IAppSettings} from '../appParams';
+import {IConnectedApp} from '../authInterfaces';
 
-function getParameterByName(name, url) {
+let appSettings: IAppSettings = global["__appSettings"];
+
+function getParameterByName(name:string, url?:string) : string {
 	if (!url) url = window.location.href;
 	name = name.replace(/[\[\]]/g, "\\$&");
 	var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)", "i"),
@@ -13,10 +18,15 @@ function getParameterByName(name, url) {
 	return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-var p = getParameterByName('p');
-var connectedApp = null;
+let p = getParameterByName('p');
 
-var global = {};
+interface IGlobal {
+	passwordResetPINEmail?:string;
+	temporaryPassword?:string;
+	signupEmail?:string;
+}
+
+let __global:IGlobal = {};
 
 var Login = React.createClass({
 	getInitialState: () => ({username: '', password: ''}),
@@ -30,8 +40,8 @@ var Login = React.createClass({
 	},
 	handleSubmit: function(event) {
 		event.preventDefault();
-		var username = this.state.username.trim();
-		var password = this.state.password.trim();
+		let username = this.state.username.trim();
+		let password = this.state.password.trim();
 		if (!username || !password) {
 			alert('username and password are required');
 		} else {
@@ -93,7 +103,7 @@ var ResetPasswordSendPin = React.createClass({
 				if (err)
 					alert('invalid email: ' + JSON.stringify(err));
 				else {
-					global.passwordResetPINEmail = email;
+					__global.passwordResetPINEmail = email;
 					window.location.hash = "#reset_pswd_enter_pin";
 				}
 			});
@@ -140,7 +150,7 @@ var ResetPasswordEnterPin = React.createClass({
 				if (err)
 					alert('invalid PIN number: ' + JSON.stringify(err));
 				else {
-					global.temporaryPassword = ret.temporaryPassword;
+					__global.temporaryPassword = ret.temporaryPassword;
 					window.location.hash = "#reset_pswd_done";
 				}
 			});
@@ -153,7 +163,7 @@ var ResetPasswordEnterPin = React.createClass({
 					<h2 id="title">Password Reset</h2>
 				</div>
 				<form className="w3-container">
-					<h5><p>A PIN number has been sent to the email address: <span style={{"fontWeight":"bold"}}>{global.passwordResetPINEmail}</span></p></h5>
+					<h5><p>A PIN number has been sent to the email address: <span style={{"fontWeight":"bold"}}>{__global.passwordResetPINEmail}</span></p></h5>
 					<p>
 						<label>Please enter the PIN number your received in your email and click the Reset My Password button</label>
 						<input className="w3-input" type="text" placeholder="PIN number" value={this.state.pin} onChange={this.handlePINChange}/>
@@ -177,7 +187,7 @@ var ResetPasswordDone = React.createClass({
 				<div className="w3-container">
 					<h5>
 						<p>Great! Your password has been reset successfully.</p>
-						<p>Your new temporary password is: <span style={{"fontWeight":"bold"}}>{global.temporaryPassword}</span></p>
+						<p>Your new temporary password is: <span style={{"fontWeight":"bold"}}>{__global.temporaryPassword}</span></p>
 						<p>Please go ahead and sign in with the temporary passsword. Once sign in, you can change the password to your preference.</p>
 					</h5>
 					<p><a href= "#login" className="w3-btn w3-white w3-border w3-border-blue w3-round">Sign in with the temporary password</a></p>
@@ -210,7 +220,7 @@ var SingUpCheck = React.createClass({
 					if (err)
 						alert('invalid email: ' + JSON.stringify(err));
 					else {
-						global.signupEmail = email;
+						__global.signupEmail = email;
 						if (ret.found)
 							window.location.hash = "#sign_up_login";
 						else
@@ -255,7 +265,7 @@ var SignUpAndLogin = React.createClass({
 		} else {
 			var data = {
 				p: this.props.p
-				,username: global.signupEmail
+				,username: __global.signupEmail
 				,password: password
 				,signUpUserForApp: true
 			};
@@ -277,7 +287,7 @@ var SignUpAndLogin = React.createClass({
 				</div>
 				<form className="w3-container">
 					<h4><p>Great! It looks like you already have a {appSettings.companyName} account with us. Just enter the account password to sign up for {this.props.connectedApp.name}</p></h4>
-					<p><label>{global.signupEmail}</label></p>
+					<p><label>{__global.signupEmail}</label></p>
 					<p><input className="w3-input" type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/></p>
 					<p><button className="w3-btn w3-white w3-border w3-border-blue w3-round" onClick={this.handleSubmit}>Sign up for {this.props.connectedApp.name}</button></p>
 				</form>
@@ -320,7 +330,7 @@ var CreateAccount = React.createClass({
 	handleSubmit: function(event) {
 		event.preventDefault();
 		//console.log(JSON.stringify(this.state));
-		var email = global.signupEmail.trim();
+		var email = __global.signupEmail.trim();
 		var firstName = this.state.firstName.trim();
 		var lastName = this.state.lastName.trim();
 		var companyName = this.state.companyName.trim();
@@ -366,7 +376,7 @@ var CreateAccount = React.createClass({
 					<h2 id="title">Create {appSettings.companyName} Account</h2>
 				</div>
 				<form className="w3-container">
-					<p><label>Email/User name: {global.signupEmail}</label></p>
+					<p><label>Email/User name: {__global.signupEmail}</label></p>
 					<p><label>First name*</label><input className="w3-input" type="text" value={this.state.firstName} onChange={this.getHandleTextFieldChange('firstName')}/></p>
 					<p><label>Last name*</label><input className="w3-input" type="text" value={this.state.lastName} onChange={this.getHandleTextFieldChange('lastName')}/></p>
 					<p><label>Company name</label><input className="w3-input" type="text" value={this.state.companyName} onChange={this.getHandleTextFieldChange('companyName')}/></p>
@@ -407,11 +417,9 @@ var OAuth2LoginApp = React.createClass({
 	}
 });
 
-$J('POST', '/services/client/get_connected_app', {p: p}, (err, client) => {
+$J('POST', '/services/client/get_connected_app', {p: p}, (err:any, connectedApp: IConnectedApp) => {
 	if (!err) {
-		connectedApp = client;
-
-		var mode = "login";
+		let mode = "login";
 		ReactDOM.render(<OAuth2LoginApp mode={mode} connectedApp={connectedApp} p={p}/>, document.getElementById('main'));
 		$(window).on('hashchange', function() {
 			//alert('hash change');

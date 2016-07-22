@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as core from 'express-serve-static-core';
-import {ClientAppAuthEndPoint, ILoginResult} from '../../clientAppAuthEndPoint';
+import {ILoginResult} from '../../authInterfaces';
+import {ClientAppAuthEndPoint} from '../../clientAppAuthEndPoint';
 import {AES256 as Aes256} from '../aes256';
 import {IGlobal} from '../../global';
 import {IAppParams} from '../../appParams';
