@@ -391,9 +391,18 @@ var CreateAccount = React.createClass({
 	}
 });
 
-var OAuth2LoginApp = React.createClass({
-	render: function() {
-		var UI;
+interface ISharedProps {
+	connectedApp: IConnectedApp;
+	p: string;
+}
+
+interface IOAuth2LoginAppProps extends ISharedProps {
+	mode: string;
+}
+
+class OAuth2LoginApp extends React.Component<IOAuth2LoginAppProps, {}> {
+	render() {
+		let UI = null;
 		if (this.props.mode === 'login')
 			UI = Login;
 		else if (this.props.mode === 'reset_password')
@@ -408,9 +417,9 @@ var OAuth2LoginApp = React.createClass({
 			UI = SignUpAndLogin;
 		else if (this.props.mode === 'create_account')
 			UI = CreateAccount;		
-		return (<div><UI connectedApp={this.props.connectedApp} p={this.props.p}/></div>);
+		return (<div><UI connectedApp={this.props.connectedApp} p={this.props.p}/></div>);		
 	}
-});
+}
 
 let __p = getParameterByName('p');
 
