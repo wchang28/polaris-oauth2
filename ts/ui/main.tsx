@@ -5,10 +5,11 @@ import {getAJaxon} from 'ajaxon';
 let $J = getAJaxon($);
 import {IAppSettings} from '../appParams';
 import {IConnectedApp} from '../authInterfaces';
+import * as reCaptcha from '../reCaptcha';
 
 let appSettings: IAppSettings = global["__appSettings"];
 
-function getParameterByName(name:string, url?:string) : string {
+let getParameterByName = (name:string, url?:string) : string => {
 	if (!url) url = window.location.href;
 	name = name.replace(/[\[\]]/g, "\\$&");
 	var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)", "i"),
@@ -17,8 +18,6 @@ function getParameterByName(name:string, url?:string) : string {
 	if (!results[2]) return '';
 	return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
-
-let p = getParameterByName('p');
 
 interface IGlobal {
 	passwordResetPINEmail?:string;
@@ -417,9 +416,10 @@ var OAuth2LoginApp = React.createClass({
 	}
 });
 
-$J('POST', '/services/client/get_connected_app', {p: p}, (err:any, connectedApp: IConnectedApp) => {
+$J('POST', '/services/client/get_connected_app', {p: getParameterByName('p')}, (err:any, connectedApp: IConnectedApp) => {
 	if (!err) {
 		let mode = "login";
+		let p = getParameterByName('p');
 		ReactDOM.render(<OAuth2LoginApp mode={mode} connectedApp={connectedApp} p={p}/>, document.getElementById('main'));
 		$(window).on('hashchange', function() {
 			//alert('hash change');

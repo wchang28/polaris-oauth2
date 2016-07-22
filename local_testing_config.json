@@ -18,6 +18,6 @@
 	{
 		"siteKey": "6LdSMx8TAAAAAARCvQT57WDNQq5m_qWN61Cn0D9Q"
 		,"serverSecret": "6LdSMx8TAAAAAAtK-L5u4oAryroTaHrsgxAv_XXK"
-		,"url": "https://www.google.com/recaptcha/api/siteverify"
+		,"siteVerifyUrl": "https://www.google.com/recaptcha/api/siteverify"
 	}
 }

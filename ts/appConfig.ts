@@ -8,7 +8,7 @@ export interface IAuthorizeEndpointOptions {
 export interface IreCaptchaSettings {
 	siteKey: string
 	serverSecret: string
-	url: string
+	siteVerifyUrl: string
 }
 
 export interface IAppConfig {

@@ -6,7 +6,7 @@ import {Router as oauth2Router} from './oauth2';
 import {Router as clientAppRouter} from './clientApp';
 import {Router as uiRouter} from './ui';
 import {ClientAppAuthEndPoint} from '../clientAppAuthEndPoint';
-import {VerifyMiddleware as reCaptchaVerifyMiddleware} from './recaptcha';
+import {VerifyMiddleware as reCaptchaVerifyMiddleware} from './recaptcha_mw';
 import {IAppParams} from '../appParams';
 import * as oauth2 from 'oauth2';
 

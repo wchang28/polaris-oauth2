@@ -59,13 +59,13 @@ export class ClientAppAuthEndPoint {
 	};
 	getAccessFromAuthCode(code:string, done:(err:any, access:oauth2.Access) => void) {
 		let data = {'code' : code};
-		this.$P("/services/authorize/get_access_from_auth_code", data, (err, access) => {
+		this.$P("/services/authorize/get_access_from_auth_code", data, (err, access:oauth2.Access) => {
 			if (typeof done === 'function') done(this.getError(err), access);
 		});
 	};
 	refreshToken(refresh_token:string, done:(err:any, access:oauth2.Access) => void) {
 		let data = {'refresh_token' : refresh_token};
-		this.$P("/services/authorize/refresh_token", data, (err, access) => {
+		this.$P("/services/authorize/refresh_token", data, (err, access:oauth2.Access) => {
 			if (typeof done === 'function') done(this.getError(err), access);
 		});
 	};
