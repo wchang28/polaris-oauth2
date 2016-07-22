@@ -308,8 +308,9 @@ var CreateAccount = React.createClass({
 		}
 	),
 	componentDidMount: function() {
-		this.captchaId = grecaptcha.render('sign_up_captcha', {
-          'sitekey' : appSettings.reCaptchaSiteKey
+		let __grecaptcha: reCaptcha.IreCaptcha = global["grecaptcha"];
+		this.captchaId = __grecaptcha.render('sign_up_captcha', {
+          sitekey : appSettings.reCaptchaSiteKey
         });
 	},
 	getHandleTextFieldChange: function(field) {
@@ -328,6 +329,7 @@ var CreateAccount = React.createClass({
 	},
 	handleSubmit: function(event) {
 		event.preventDefault();
+		let __grecaptcha: reCaptcha.IreCaptcha = global["grecaptcha"];
 		//console.log(JSON.stringify(this.state));
 		var email = __global.signupEmail.trim();
 		var firstName = this.state.firstName.trim();
@@ -356,7 +358,7 @@ var CreateAccount = React.createClass({
 				,companyName: (companyName ? companyName : null)
 				,mobilePhone: mobilePhone
 				,promotionalMaterial: promotionalMaterial
-				,'g-recaptcha-response': grecaptcha.getResponse(this.captchaId)
+				,'g-recaptcha-response': __grecaptcha.getResponse(this.captchaId)
 			};
 			$J('POST', '/services/client/sign_up_new_user', data, function(err, ret) {
 				if (err)
