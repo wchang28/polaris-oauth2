@@ -29,11 +29,22 @@ export class ClientAppAuthEndPoint {
 		};
 		$J('POST', this.options.baseUrl + path, data, done, headers, this.options.rejectUnauthorized);
 	}
+	/*
 	getConnectedApp(done:(err:any, connectedApp:IConnectedApp) => void) {
 		let data = {};
 		this.$P("/services/authorize/get_client", data, (err, connectedApp) => {
 			if (typeof done === 'function') done(this.getError(err), connectedApp);
 		});
+	}
+	*/
+	// TODO: remove test code
+	getConnectedApp(done:(err:any, connectedApp:IConnectedApp) => void) {
+		let connectedApp:IConnectedApp = {
+			name: 'Harvest Grid Admin'
+			,allow_reset_pswd: false
+			,allow_create_new_user: false			
+		};
+		done(null, connectedApp);
 	}
 	/*
 	userLogin(response_type:oauth2.AuthResponseType, requireClientSecret: boolean, requireRedirectUrl: boolean, username:string, password:string, signUpUserForApp:boolean, done:(err:any, ret:ILoginResult) => void) {
