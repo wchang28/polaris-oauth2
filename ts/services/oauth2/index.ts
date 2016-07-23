@@ -10,9 +10,6 @@ import * as _ from 'lodash';
 
 let router = express.Router();
 
-let err_bad_response_type = {"error": "unsupported_response_type", "error_description":"response type is not supported"};
-let err_bad_grant_type = {"error": "unsupported_grant_type", "error_description":"grant type not supported"};
-
 let getGlobal = (req: express.Request) : IGlobal => {return req.app.get('global');}
 
 // token grant handler
@@ -25,7 +22,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 	let onError = (err: any) : void => {res.status(400).json(err);}
 	try	{
 		if (params) {
-			if (!params.grant_type) throw err_bad_grant_type;
+			if (!params.grant_type) throw oauth2.errors.bad_grant_type;
 			let appSettings: oauth2.ClientAppSettings = {client_id: params.client_id, redirect_uri: params.redirect_uri, client_secret: params.client_secret};
 			let ae = new ClientAppAuthEndPoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
 			switch(params.grant_type) {
@@ -57,10 +54,10 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 					break;
 				}
 				default:
-					throw err_bad_grant_type;
+					throw oauth2.errors.bad_grant_type;
 			}
 		} else {
-			throw err_bad_grant_type;
+			throw oauth2.errors.bad_grant_type;
 		}
 	} catch(err) {
 		onError(err);
@@ -79,7 +76,7 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 	};
 	let response_type = authParams.response_type;
 	if (!response_type || (response_type !== 'code' && response_type !== 'token'))
-		onError(err_bad_response_type);
+		onError(oauth2.errors.bad_response_type);
 	else {
 		let appSettings: oauth2.ClientAppSettings = {client_id: authParams.client_id, redirect_uri: authParams.redirect_uri};
 		let ae = new ClientAppAuthEndPoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
