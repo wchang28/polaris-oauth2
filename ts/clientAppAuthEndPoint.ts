@@ -1,8 +1,7 @@
 import {getAJaxon} from 'ajaxon';
 let $J = getAJaxon(require('jquery-no-dom'));
-import {IAuthorizeEndpointOptions} from "./appConfig";
 import * as oauth2 from 'oauth2';
-import {IConnectedApp, IAuthorizedUser, ILoginResult} from './authInterfaces';
+import {IAuthorizeEndpointOptions, IConnectedApp, IAuthorizedUser, ILoginResult} from './authInterfaces';
 
 export class ClientAppAuthEndPoint {
 	constructor (private options:IAuthorizeEndpointOptions, public clientAppSettings:oauth2.ClientAppSettings) {}

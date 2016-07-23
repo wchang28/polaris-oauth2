@@ -1,9 +1,6 @@
 import {IWebServerConfig} from 'express-web-server';
+import {IAuthorizeEndpointOptions} from './authInterfaces';
 
-export interface IAuthorizeEndpointOptions {
-	baseUrl:string;
-	rejectUnauthorized?:boolean
-}
 
 export interface IreCaptchaSettings {
 	siteKey: string

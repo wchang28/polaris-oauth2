@@ -1,5 +1,10 @@
 import * as oauth2 from 'oauth2';
 
+export interface IAuthorizeEndpointOptions {
+	baseUrl:string;
+	rejectUnauthorized?:boolean
+}
+
 export interface IConnectedApp {
 	name: string;
 	allow_reset_pswd: boolean;
