@@ -98,4 +98,15 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 	}
 });
 
+router.post('/verify_token', (req: express.Request, res: express.Response) => {
+	let params: authInt.ITokenVerifyParams = req.body;
+	let ae = new ClientAppAuthEndpoint(getGlobal(req).config.authorizeEndpointOptions, params.clientAppSettings);
+	ae.verifyAccessToken(params.accessToken, (err:any, user: authInt.IAuthorizedUser) => {
+		if (err)
+			res.status(401).json(err);
+		else
+			res.json(user);
+	});
+});
+
 export {router as Router};

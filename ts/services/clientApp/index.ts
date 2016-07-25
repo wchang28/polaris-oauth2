@@ -19,16 +19,6 @@ router.post('/get_connected_app', (req: express.Request, res: express.Response) 
 	});
 });
 
-router.post('/verify_token', (req: express.Request, res: express.Response) => {
-	let accessToken: oauth2.AccessToken = req.body;
-	getAuthorizationEndpoint(req).verifyAccessToken(accessToken, (err:any, user:IAuthorizedUser) => {
-		if (err)
-			res.status(400).json(err);
-		else
-			res.jsonp(user);
-	})
-});
-
 router.post('/lookup_user', (req: express.Request, res: express.Response) => {
 	let data = req.body;
 	// data.username
