@@ -11,7 +11,7 @@
 	,"cipherSecret": "bnegr9he4q53490"
 	,"authorizeEndpointOptions":
 	{
-		 "baseUrl": "http://127.0.0.1:82"
+		 "baseUrl": "http://127.0.0.1:4576"
 		 ,"rejectUnauthorized": false
 	}
 	,"reCaptchaSettings":
