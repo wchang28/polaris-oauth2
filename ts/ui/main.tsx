@@ -78,7 +78,7 @@ var Login = React.createClass({
 					<p><label>Sign in with your {appSettings.companyName} account</label></p>
 					<p><input className="w3-input" type="text" name="username" placeholder="Email" value={this.state.username} onChange={this.handleUsernameChange}/></p>
 					<p><input className="w3-input" type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/></p>
-					<p><button className="w3-btn w3-white w3-border w3-border-blue w3-round" onClick={this.handleSubmit}>Sign in</button></p>
+					<p><button className="w3-btn w3-white w3-border w3-border-blue w3-round" onClick={this.handleSubmit.bind(this)}>Sign in</button></p>
 				</form>
 				<div className="w3-container w3-white">
 					<p><a href="#reset_password" style={forgetMyPasswordStyle}>I forgot my password</a></p>
