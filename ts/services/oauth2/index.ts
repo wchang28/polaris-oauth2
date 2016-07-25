@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as core from 'express-serve-static-core';
 import {ILoginResult} from '../../authInterfaces';
-import {ClientAppAuthEndPoint} from '../../clientAppAuthEndPoint';
+import {ClientAppAuthEndpoint} from '../../clientAppAuthEndpoint';
 import {AES256 as Aes256} from '../aes256';
 import {IGlobal} from '../../global';
 import {IAppParams} from '../../appParams';
@@ -24,10 +24,10 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 		if (params) {
 			if (!params.grant_type) throw oauth2.errors.bad_grant_type;
 			let appSettings: oauth2.ClientAppSettings = {client_id: params.client_id, redirect_uri: params.redirect_uri, client_secret: params.client_secret};
-			let ae = new ClientAppAuthEndPoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
+			let ae = new ClientAppAuthEndpoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
 			switch(params.grant_type) {
 				case "password": {
-					ae.userLogin('token', true, false, params.username, params.password, false, (err:any, ret: ILoginResult) => {
+					ae.automationLogin(params.username, params.password, false, (err:any, ret: ILoginResult) => {
 						if (err)
 							onError(err);
 						else
@@ -79,7 +79,7 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 		onError(oauth2.errors.bad_response_type);
 	else {
 		let appSettings: oauth2.ClientAppSettings = {client_id: authParams.client_id, redirect_uri: authParams.redirect_uri};
-		let ae = new ClientAppAuthEndPoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
+		let ae = new ClientAppAuthEndpoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
 		ae.getConnectedApp((err:any, connectedApp:any) => {
 			if (err)
 				onError(err);
