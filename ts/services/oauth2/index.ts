@@ -27,7 +27,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 			let ae = new ClientAppAuthEndpoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
 			switch(params.grant_type) {
 				case "password": {
-					ae.automationLogin(params.username, params.password, false, (err:any, ret: ILoginResult) => {
+					ae.automationLogin(params.username, params.password, (err:any, ret: ILoginResult) => {
 						if (err)
 							onError(err);
 						else
