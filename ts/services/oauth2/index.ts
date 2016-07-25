@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as core from 'express-serve-static-core';
 import {ILoginResult} from '../../authInterfaces';
+import * as authInt from '../../authInterfaces';
 import {ClientAppAuthEndpoint} from '../../clientAppAuthEndpoint';
 import {AES256 as Aes256} from '../aes256';
 import {IGlobal} from '../../global';
@@ -80,7 +81,7 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 	else {
 		let appSettings: oauth2.ClientAppSettings = {client_id: authParams.client_id, redirect_uri: authParams.redirect_uri};
 		let ae = new ClientAppAuthEndpoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
-		ae.getConnectedApp((err:any, connectedApp:any) => {
+		ae.getConnectedApp((err:any, connectedApp: authInt.IConnectedApp) => {
 			if (err)
 				onError(err);
 			else {
