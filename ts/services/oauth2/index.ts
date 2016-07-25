@@ -82,14 +82,16 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 		let appSettings: oauth2.ClientAppSettings = {client_id: authParams.client_id, redirect_uri: authParams.redirect_uri};
 		let ae = new ClientAppAuthEndpoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
 		ae.getConnectedApp((err:any, connectedApp: authInt.IConnectedApp) => {
-			if (err)
+			if (err) {
+				console.error('!!! Error ===> ' + JSON.stringify(err));
 				onError(err);
-			else {
+			} else {
 				let params:IAppParams = <IAppParams>(_.assignIn({}, authParams, {time_stamp: new Date()}));
 				let aes256 = new Aes256(getGlobal(req).config.cipherSecret);
 				let encryptd = aes256.encrypt(JSON.stringify(params));
 				// redirect user's browser to login screen with app params in the query string
 				let redirectUrl = '../../login' + '?p=' + encodeURIComponent(encryptd);
+				console.log('redirectUrl=' + redirectUrl);
 				res.redirect(redirectUrl);
 			}
 		});

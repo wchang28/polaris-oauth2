@@ -29,7 +29,7 @@ export class ClientAppAuthEndpoint {
 		$J('POST', this.options.baseUrl + path, data, done, headers, this.options.rejectUnauthorized);
 	}
 	getConnectedApp(done:(err:any, connectedApp:authInt.IConnectedApp) => void) {
-		this.$P("/services/authorize/get_connected_app", {}, (err, connectedApp) => {
+		this.$P("/services/authorize/get_connected_app", {}, (err:any, connectedApp: authInt.IConnectedApp) => {
 			if (typeof done === 'function') done(this.getError(err), connectedApp);
 		});
 	}
