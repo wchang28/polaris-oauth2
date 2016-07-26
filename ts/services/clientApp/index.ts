@@ -4,6 +4,7 @@ import {IConnectedApp, IAuthorizedUser, ILoginResult} from '../../authInterfaces
 import {ClientAppAuthEndpoint} from '../../clientAppAuthEndpoint';
 import {IAppParams} from '../../appParams';
 import * as oauth2 from 'oauth2';
+import * as uiInt from '../../uiInterfaces';
 
 let router = express.Router();
 
@@ -34,7 +35,7 @@ router.post('/lookup_user', (req: express.Request, res: express.Response) => {
 // login post - login UI will make this call when the "Login" button is pressed
 router.post('/login', (req: express.Request, res: express.Response) => {
 	console.log('hitting /login');
-	let data = req.body;
+	let data:uiInt.ILoginParams = req.body;
 	//console.log(JSON.stringify(data));
 	// data.username, data.password, data.signUpUserForApp
 	let signUpUserForApp = (data.signUpUserForApp ? true : false);

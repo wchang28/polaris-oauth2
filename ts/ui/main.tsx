@@ -6,6 +6,7 @@ let $J = ajaxon.getAJaxon($);
 import {IAppSettings} from '../appParams';
 import {IConnectedApp} from '../authInterfaces';
 import * as reCaptcha from '../reCaptcha';
+import * as uiInt from '../uiInterfaces';
 
 let appSettings: IAppSettings = global["__appSettings"];
 
@@ -52,7 +53,7 @@ var Login = React.createClass({
 		if (!username || !password) {
 			alert('username and password are required');
 		} else {
-			let data = {
+			let data: uiInt.ILoginParams = {
 				username: username
 				,password: password
 				,signUpUserForApp: false
@@ -266,7 +267,7 @@ var SignUpAndLogin = React.createClass({
 		if (!password) {
 			alert('password are required');
 		} else {
-			var data = {
+			let data: uiInt.ILoginParams = {
 				username: __global.signupEmail
 				,password: password
 				,signUpUserForApp: true
