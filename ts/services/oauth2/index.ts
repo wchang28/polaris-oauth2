@@ -100,7 +100,7 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 
 router.post('/verify_token', (req: express.Request, res: express.Response) => {
 	let params: authInt.ITokenVerifyParams = req.body;
-	console.log('token verification call. params = ' + JSON.stringify(params));
+	//console.log('token verification call. params = ' + JSON.stringify(params));
 	let ae = new ClientAppAuthEndpoint(getGlobal(req).config.authorizeEndpointOptions, params.clientAppSettings);
 	ae.verifyAccessToken(params.accessToken, (err:any, user: authInt.IAuthorizedUser) => {
 		if (err)
