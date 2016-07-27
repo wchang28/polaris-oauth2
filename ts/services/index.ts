@@ -5,7 +5,7 @@ import {IGlobal} from '../global';
 import {Router as oauth2Router} from './oauth2';
 import {Router as clientAppRouter} from './clientApp';
 import {Router as uiRouter} from './ui';
-import {ClientAppAuthEndpoint} from '../clientAppAuthEndpoint';
+import * as auth_client from 'polaris-auth-client';
 import {VerifyMiddleware as reCaptchaVerifyMiddleware} from './recaptcha_mw';
 import {IAppParams} from '../appParams';
 import * as oauth2 from 'oauth2';
@@ -26,7 +26,7 @@ function clientAppCallMiddleware(req: express.Request, res: express.Response, ne
 		let params:IAppParams = JSON.parse(aes256.decrypt(p));
 		req["parameters"] = params;
 		let appSettings: oauth2.ClientAppSettings = {client_id: params.client_id, redirect_uri: params.redirect_uri};
-		req["authEndPoint"] = new ClientAppAuthEndpoint(config.authorizeEndpointOptions, appSettings);
+		req["authEndPoint"] = new auth_client.AuthClient(getGlobal(req).jQuery, config.authorizeEndpointOptions, appSettings);
 		next();
 	} else {
 		res.status(400).json({'error': 'bad-request', 'error_description': 'bad request'});

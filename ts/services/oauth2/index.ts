@@ -1,8 +1,6 @@
 import * as express from 'express';
 import * as core from 'express-serve-static-core';
-import {ILoginResult} from '../../authInterfaces';
-import * as authInt from '../../authInterfaces';
-import {ClientAppAuthEndpoint} from '../../clientAppAuthEndpoint';
+import * as auth_client from 'polaris-auth-client';
 import {AES256 as Aes256} from '../aes256';
 import {IGlobal} from '../../global';
 import {IAppParams} from '../../appParams';
@@ -25,10 +23,10 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 		if (params) {
 			if (!params.grant_type) throw oauth2.errors.bad_grant_type;
 			let appSettings: oauth2.ClientAppSettings = {client_id: params.client_id, redirect_uri: params.redirect_uri, client_secret: params.client_secret};
-			let ae = new ClientAppAuthEndpoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
+			let ae = new auth_client.AuthClient(getGlobal(req).jQuery, getGlobal(req).config.authorizeEndpointOptions, appSettings);
 			switch(params.grant_type) {
 				case "password": {
-					ae.automationLogin(params.username, params.password, (err:any, ret: ILoginResult) => {
+					ae.automationLogin(params.username, params.password, (err:any, ret: auth_client.ILoginResult) => {
 						if (err)
 							onError(err);
 						else
@@ -80,8 +78,8 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 		onError(oauth2.errors.bad_response_type);
 	else {
 		let appSettings: oauth2.ClientAppSettings = {client_id: authParams.client_id, redirect_uri: authParams.redirect_uri};
-		let ae = new ClientAppAuthEndpoint(getGlobal(req).config.authorizeEndpointOptions, appSettings);
-		ae.getConnectedApp((err:any, connectedApp: authInt.IConnectedApp) => {
+		let ae = new auth_client.AuthClient(getGlobal(req).jQuery, getGlobal(req).config.authorizeEndpointOptions, appSettings);
+		ae.getConnectedApp((err:any, connectedApp: auth_client.IConnectedApp) => {
 			if (err) {
 				console.error('!!! Error ===> ' + JSON.stringify(err));
 				onError(err);
@@ -96,18 +94,6 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 			}
 		});
 	}
-});
-
-router.post('/verify_token', (req: express.Request, res: express.Response) => {
-	let params: authInt.ITokenVerifyParams = req.body;
-	//console.log('token verification call. params = ' + JSON.stringify(params));
-	let ae = new ClientAppAuthEndpoint(getGlobal(req).config.authorizeEndpointOptions, params.clientAppSettings);
-	ae.verifyAccessToken(params.accessToken, (err:any, user: authInt.IAuthorizedUser) => {
-		if (err)
-			res.status(401).json(err);
-		else
-			res.json(user);
-	});
 });
 
 export {router as Router};

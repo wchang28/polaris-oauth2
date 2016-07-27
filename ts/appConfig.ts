@@ -1,6 +1,5 @@
 import {IWebServerConfig} from 'express-web-server';
-import {IAuthorizeEndpointOptions} from './authInterfaces';
-
+import * as auth_client from 'polaris-auth-client';
 
 export interface IreCaptchaSettings {
 	siteKey: string
@@ -12,6 +11,6 @@ export interface IAppConfig {
 	webServerConfig?: IWebServerConfig;
 	companyName: string;
 	cipherSecret: string;
-	authorizeEndpointOptions: IAuthorizeEndpointOptions;
+	authorizeEndpointOptions: auth_client.IAuthorizeEndpointOptions;
 	reCaptchaSettings: IreCaptchaSettings;
 }

@@ -4,7 +4,7 @@ import * as $ from 'jquery';
 import * as ajaxon from 'ajaxon';
 let $J = ajaxon.getAJaxon($);
 import {IAppSettings} from '../appParams';
-import {IConnectedApp} from '../authInterfaces';
+import {IConnectedApp} from 'polaris-auth-client';
 import * as reCaptcha from '../reCaptcha';
 import * as uiInt from '../uiInterfaces';
 

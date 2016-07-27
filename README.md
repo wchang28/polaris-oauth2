@@ -1,1 +1,1 @@
-"# polaris-oauth2" 
+# Polaris OAuth2 Authorization Server Application

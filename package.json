@@ -1,7 +1,7 @@
 {
   "name": "polaris-oauth2",
   "version": "0.0.1",
-  "description": "Polaris OAuth2 Authorization Application",
+  "description": "Polaris OAuth2 Authorization Server Application",
   "main": "./js/app.js",
   "scripts": {
     "start": "node ./js/app.js"
@@ -26,6 +26,7 @@
     "multer": "^1.1.0",
     "no-cache-express": "git+https://github.com/wchang28/no-cache-express.git",
     "oauth2": "git+https://github.com/wchang28/oauth2.git",
+    "polaris-auth-client": "git+https://github.com/wchang28/polaris-auth-client.git",
     "react": "^0.14.3",
     "react-dom": "^0.14.3"
   },
