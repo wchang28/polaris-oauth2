@@ -4,14 +4,14 @@
 		"http":
 		{
 			"host": "0.0.0.0"
-			,"port": 3382
+			,"port": 33821
 		}
 	}
 	,"companyName": "Polaris"
 	,"cipherSecret": "bnegr9he4q53490"
 	,"authorizeEndpointOptions":
 	{
-		 "baseUrl": "http://127.0.0.1:4576"
+		 "baseUrl": "http://127.0.0.1:52131"
 		 ,"rejectUnauthorized": false
 	}
 	,"reCaptchaSettings":
