@@ -46,5 +46,5 @@ app.use('/bower_components', express.static(path.join(__dirname, '../bower_compo
 app.use('/login', express.static(path.join(__dirname, '../login')));	// login UI
 
 startServer(config.webServerConfig, app, (secure:boolean, host:string, port:number) => {
-	console.log('app server listening at %s://%s:%s', (secure ? 'https' : 'http'), host, port);
+	console.log('oauth2 server listening at %s://%s:%s', (secure ? 'https' : 'http'), host, port);
 });
