@@ -19,7 +19,7 @@ let getGlobal = (req: express.Request) : IGlobal => {return req.app.get('global'
 // POST form data
 router.post('/token', (req: express.Request, res: express.Response) => {
 	let params:oauth2.TokenGrantParams = req.body;
-	console.log('token grant call. data = ' + JSON.stringify(params));
+	console.log('token grant call. params = ' + JSON.stringify(params));
 	let onError = (err: any) : void => {res.status(400).json(err);}
 	try	{
 		if (params) {
@@ -100,6 +100,7 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 
 router.post('/verify_token', (req: express.Request, res: express.Response) => {
 	let params: authInt.ITokenVerifyParams = req.body;
+	console.log('token verification call. params = ' + JSON.stringify(params));
 	let ae = new ClientAppAuthEndpoint(getGlobal(req).config.authorizeEndpointOptions, params.clientAppSettings);
 	ae.verifyAccessToken(params.accessToken, (err:any, user: authInt.IAuthorizedUser) => {
 		if (err)
