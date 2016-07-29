@@ -3,3 +3,7 @@ export interface ILoginParams {
     password: string;
     signUpUserForApp: boolean;
 }
+
+export interface ILoginResult {
+    redirect_url: string;
+}

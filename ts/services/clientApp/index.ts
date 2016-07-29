@@ -58,8 +58,8 @@ router.post('/login', (req: express.Request, res: express.Response) => {
 			}
 			if (params.state) redirectUrl += '&state=' + encodeURIComponent(params.state);	// add application state info
 			console.log('redirecting browser to ' + redirectUrl);
-			//res.redirect(redirectUrl);
-			res.jsonp({redirect_url: redirectUrl});
+			let result: uiInt.ILoginResult =  {redirect_url: redirectUrl};
+			res.jsonp(result);
 		}
 	});
 });

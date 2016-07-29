@@ -47,7 +47,6 @@ var Login = React.createClass({
 		this.setState({password: e.target.value});
 	},
 	handleSubmit: function(event) {
-		event.preventDefault();
 		let username = this.state.username.trim();
 		let password = this.state.password.trim();
 		if (!username || !password) {
@@ -58,28 +57,31 @@ var Login = React.createClass({
 				,password: password
 				,signUpUserForApp: false
 			};
-			this.props.$P('/services/client/login', data, (err:any, ret:any) => {
+			this.props.$P('/services/client/login', data, (err:any, ret:uiInt.ILoginResult) => {
 				if (err)
 					alert('invalid username or password: ' + JSON.stringify(err));
 				else {
+					// login successful, redirecting to the app url
 					window.location.replace(ret.redirect_url);
 				}
 			});
 		}
 	},
 	render: function() {
-		var forgetMyPasswordStyle = (this.props.connectedApp.allow_reset_pswd ? {} : {'display': 'none'});
-		var createNewAccountStyle = (this.props.connectedApp.allow_create_new_user ? {} : {'display': 'none'});
+		let hiddenFrameStyle = {'display': 'none'};
+		let forgetMyPasswordStyle = (this.props.connectedApp.allow_reset_pswd ? {} : {'display': 'none'});
+		let createNewAccountStyle = (this.props.connectedApp.allow_create_new_user ? {} : {'display': 'none'});
 		return (
 			<div>
 				<div className="w3-container w3-blue">
 					<h2 id="title">{this.props.connectedApp.name} Sign In</h2>
 				</div>
-				<form className="w3-container" autoComplete="on">
+				<iframe name="hidden_frame" style={hiddenFrameStyle} src="about:blank"></iframe>
+				<form className="w3-container" autoComplete="on" target="hidden_frame" action="about:blank">
 					<p><label>Sign in with your {appSettings.companyName} account</label></p>
-					<p><input className="w3-input" type="text" name="username" placeholder="Email" value={this.state.username} onChange={this.handleUsernameChange} autoComplete="on"/></p>
-					<p><input className="w3-input" type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange} autoComplete="on"/></p>
-					<p><button className="w3-btn w3-white w3-border w3-border-blue w3-round" onClick={this.handleSubmit}>Sign in</button></p>
+					<p><input className="w3-input" type="text" name="username" placeholder="Username" value={this.state.username} onChange={this.handleUsernameChange}/></p>
+					<p><input className="w3-input" type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/></p>
+					<p><input className="w3-btn w3-white w3-border w3-border-blue w3-round" type="submit" onClick={this.handleSubmit} value="Sign in"/></p>
 				</form>
 				<div className="w3-container w3-white">
 					<p><a href="#reset_password" style={forgetMyPasswordStyle}>I forgot my password</a></p>
