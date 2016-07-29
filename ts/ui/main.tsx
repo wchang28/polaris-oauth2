@@ -68,6 +68,7 @@ var Login = React.createClass({
 		}
 	},
 	render: function() {
+		let autoComplete = "on";
 		let hiddenFrameStyle = {'display': 'none'};
 		let forgetMyPasswordStyle = (this.props.connectedApp.allow_reset_pswd ? {} : {'display': 'none'});
 		let createNewAccountStyle = (this.props.connectedApp.allow_create_new_user ? {} : {'display': 'none'});
@@ -77,7 +78,7 @@ var Login = React.createClass({
 					<h2 id="title">{this.props.connectedApp.name} Sign In</h2>
 				</div>
 				<iframe name="hidden_frame" style={hiddenFrameStyle} src="about:blank"></iframe>
-				<form className="w3-container" autoComplete="on" target="hidden_frame" action="about:blank">
+				<form className="w3-container" autoComplete={autoComplete} target="hidden_frame" action="about:blank">
 					<p><label>Sign in with your {appSettings.companyName} account</label></p>
 					<p><input className="w3-input" type="text" name="username" placeholder="Username" value={this.state.username} onChange={this.handleUsernameChange}/></p>
 					<p><input className="w3-input" type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/></p>
