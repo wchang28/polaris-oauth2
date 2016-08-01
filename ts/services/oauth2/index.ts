@@ -26,6 +26,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 			let ae = new auth_client.AuthClient(getGlobal(req).jQuery, getGlobal(req).config.authorizeEndpointOptions, appSettings);
 			switch(params.grant_type) {
 				case "password": {
+					if (!params.username || !params.password) throw oauth2.errors.bad_credential;
 					ae.automationLogin(params.username, params.password, (err:any, ret: auth_client.ILoginResult) => {
 						if (err)
 							onError(err);
@@ -35,6 +36,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 					break;
 				}
 				case "refresh_token": {
+					if (!params.refresh_token) throw oauth2.errors.bad_credential;
 					ae.refreshToken(params.refresh_token, (err:any, access:oauth2.Access) => {
 						if (err)
 							onError(err);
@@ -44,6 +46,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 					break;
 				}
 				case "authorization_code": {
+					if (!params.code) throw oauth2.errors.bad_credential;
 					ae.getAccessFromAuthCode(params.code, (err:any, access:oauth2.Access) => {
 						if (err)
 							onError(err);
