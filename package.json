@@ -21,6 +21,7 @@
     "express": "^4.13.4",
     "express-web-seerver": "git+https://github.com/wchang28/express-web-server.git",
     "jquery": "^2.2.3",
+    "jquery-no-dom": "git+https://github.com/wchang28/jquery-no-dom.git",
     "lodash": "^4.11.1",
     "multer": "^1.1.0",
     "no-cache-express": "git+https://github.com/wchang28/no-cache-express.git",
