@@ -23,7 +23,7 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 		if (params) {
 			if (!params.grant_type) throw oauth2.errors.bad_grant_type;
 			let appSettings: oauth2.ClientAppSettings = {client_id: params.client_id, redirect_uri: params.redirect_uri, client_secret: params.client_secret};
-			let ae = new auth_client.AuthClient(getGlobal(req).jQuery, getGlobal(req).config.authorizeEndpointOptions, appSettings);
+			let ae = new auth_client.AuthClient(getGlobal(req).config.authorizeEndpointOptions, appSettings);
 			switch(params.grant_type) {
 				case "password": {
 					if (!params.username || !params.password) throw oauth2.errors.bad_credential;
@@ -81,7 +81,7 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 		onError(oauth2.errors.bad_response_type);
 	else {
 		let appSettings: oauth2.ClientAppSettings = {client_id: authParams.client_id, redirect_uri: authParams.redirect_uri};
-		let ae = new auth_client.AuthClient(getGlobal(req).jQuery, getGlobal(req).config.authorizeEndpointOptions, appSettings);
+		let ae = new auth_client.AuthClient(getGlobal(req).config.authorizeEndpointOptions, appSettings);
 		ae.getConnectedApp((err:any, connectedApp: auth_client.IConnectedApp) => {
 			if (err) {
 				console.error('!!! Error ===> ' + JSON.stringify(err));

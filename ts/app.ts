@@ -8,7 +8,6 @@ import {Router as servicesRouter} from './services';
 import {IWebServerConfig, startServer} from 'express-web-server';
 import {IAppConfig} from './appConfig';
 import {IGlobal} from './global';
-let $ = require('jquery-no-dom');
 
 let app = express();
 
@@ -39,7 +38,6 @@ app.set('jsonp callback name', 'cb');
 
 let g: IGlobal = {
 	config: config
-	,jQuery: $
 };
 app.set('global', g);
 

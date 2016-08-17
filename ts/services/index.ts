@@ -26,7 +26,7 @@ function clientAppCallMiddleware(req: express.Request, res: express.Response, ne
 		let params:IAppParams = JSON.parse(aes256.decrypt(p));
 		req["parameters"] = params;
 		let appSettings: oauth2.ClientAppSettings = {client_id: params.client_id, redirect_uri: params.redirect_uri};
-		req["authEndPoint"] = new auth_client.AuthClient(getGlobal(req).jQuery, config.authorizeEndpointOptions, appSettings);
+		req["authEndPoint"] = new auth_client.AuthClient(config.authorizeEndpointOptions, appSettings);
 		next();
 	} else {
 		res.status(400).json({'error': 'bad-request', 'error_description': 'bad request'});
