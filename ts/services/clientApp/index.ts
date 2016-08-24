@@ -20,10 +20,8 @@ router.post('/get_connected_app', (req: express.Request, res: express.Response) 
 });
 
 router.post('/lookup_user', (req: express.Request, res: express.Response) => {
-	let data = req.body;
-	// data.username
-	let username = data.username;
-	getAuthorizationEndpoint(req).lookupUser(username, (err, data) => {
+	let params:auth_client.IUsernameParams = req.body;
+	getAuthorizationEndpoint(req).lookupUser(params.username, (err, data) => {
 		if (err)
 			res.status(400).json(err);
 		else
@@ -67,10 +65,8 @@ router.post('/login', (req: express.Request, res: express.Response) => {
 // start password reset process
 // this send a PIN to user's email
 router.post('/sspr', (req: express.Request, res: express.Response) => {
-	let data = req.body;
-	// data.username
-	let username = data.username;
-	getAuthorizationEndpoint(req).SSPR(username, (err, data) => {
+	let params:auth_client.IUsernameParams = req.body;
+	getAuthorizationEndpoint(req).SSPR(params.username, (err, data) => {
 		if (err)
 			res.status(400).json(err);
 		else
@@ -80,10 +76,8 @@ router.post('/sspr', (req: express.Request, res: express.Response) => {
 
 // reset password
 router.post('/reset_password', (req: express.Request, res: express.Response) => {
-	let data = req.body;
-	// data.pin
-	let pin = data.pin;
-	getAuthorizationEndpoint(req).resetPassword(pin, (err, data) => {
+	let params:auth_client.IResetPasswordParams = req.body;
+	getAuthorizationEndpoint(req).resetPassword(params.pin, (err, data) => {
 		if (err)
 			res.status(400).json(err);
 		else
@@ -93,16 +87,7 @@ router.post('/reset_password', (req: express.Request, res: express.Response) => 
 
 // create a new account and sign up for the client app
 router.post('/sign_up_new_user', (req: express.Request, res: express.Response) => {
-	let data = req.body;
-	let accountOptions = {
-		firstName: data.firstName
-		,lastName: data.lastName
-		,username: data.username
-		,password: data.password
-		,companyName: data.companyName ? data.companyName : null
-		,mobilePhone: data.mobilePhone
-		,promotionalMaterial: data.promotionalMaterial
-	}
+	let accountOptions:auth_client.IAccountOptions = req.body;
 	getAuthorizationEndpoint(req).signUpNewUser(accountOptions, (err, data) => {
 		if (err)
 			res.status(400).json(err);
