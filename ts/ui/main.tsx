@@ -219,9 +219,10 @@ var SingUpCheck = React.createClass({
 		} else {
 			let params: IUsernameParams = {username};
 			this.props.$P('/services/client/lookup_user', params, (err:any, user:IAuthorizedUser) => {
-				if (err)
+				if (err) {
+					__global.signUpUserName = username.toLowerCase();
 					window.location.hash = "#create_account";
-				else {
+				} else {
 					__global.signUpUserName = user.userName;
 					window.location.hash = "#sign_up_login";
 				}
