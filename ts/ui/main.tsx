@@ -220,7 +220,7 @@ var SingUpCheck = React.createClass({
 			let params: IUsernameParams = {username};
 			this.props.$P('/services/client/lookup_user', params, (err:any, user:IAuthorizedUser) => {
 				if (err)
-					alert('invalid email: ' + JSON.stringify(err));
+					alert('invalid username: ' + JSON.stringify(err));
 				else {
 					__global.signUpUserName = user.userName;
 					if (JSON.stringify(user) != '{}')
@@ -269,7 +269,7 @@ var SignUpAndLogin = React.createClass({
 				,password: password
 				,signUpUserForApp: true
 			};
-			this.props.$P('/services/client/login', data, (err:any, ret:any) => {
+			this.props.$P('/services/client/login', data, (err:any, ret:uiInt.ILoginResult) => {
 				if (err)
 					alert('invalid username or password: ' + JSON.stringify(err));
 				else {
@@ -385,7 +385,7 @@ var CreateAccount = React.createClass({
 					<p><label>User name: {__global.signUpUserName}</label></p>
 					<p><label>First name*</label><input className="w3-input" type="text" value={this.state.firstName} onChange={this.getHandleTextFieldChange('firstName')}/></p>
 					<p><label>Last name*</label><input className="w3-input" type="text" value={this.state.lastName} onChange={this.getHandleTextFieldChange('lastName')}/></p>
-					<p><label>Email*</label><input className="w3-input" type="text" value={this.state.email} onChange={this.getHandleTextFieldChange('email')}/></p>
+					<p><label>Email*</label><input className="w3-input" type="text" placeholder="account@domain.com" value={this.state.email} onChange={this.getHandleTextFieldChange('email')}/></p>
 					<p><label>Company name</label><input className="w3-input" type="text" value={this.state.companyName} onChange={this.getHandleTextFieldChange('companyName')}/></p>
 					<p><label>Mobile phone*</label><input className="w3-input" type="text" value={this.state.mobilePhone} onChange={this.getHandleTextFieldChange('mobilePhone')}/></p>
 					<p><label>Password*</label><input className="w3-input" type="password" placeholder="Password" value={this.state.password} onChange={this.getHandleTextFieldChange('password')}/></p>
