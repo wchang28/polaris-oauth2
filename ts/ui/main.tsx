@@ -367,7 +367,7 @@ var CreateAccount = React.createClass({
 				if (err)
 					alert('!!! Error: ' + JSON.stringify(err));
 				else {
-					alert(JSON.stringify(ret));
+					alert('account created :-)');
 					window.location.hash = "#login";
 				}
 			});
