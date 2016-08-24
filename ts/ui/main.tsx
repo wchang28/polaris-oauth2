@@ -239,7 +239,7 @@ var SingUpCheck = React.createClass({
 				</div>
 				<form className="w3-container">
 					<p>
-						<label>Please a username</label>
+						<label>Please a user name:</label>
 						<input className="w3-input" type="text" placeholder="account@domain.com" value={this.state.username} onChange={this.handleEmailChange.bind(this)}/>
 					</p>
 					<p>
