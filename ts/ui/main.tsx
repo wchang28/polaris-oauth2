@@ -4,7 +4,7 @@ import * as $ from 'jquery';
 import * as ajaxon from 'ajaxon';
 let $J = ajaxon.getAJaxon($);
 import {IAppSettings} from '../appParams';
-import {IConnectedApp} from 'polaris-auth-client';
+import {IConnectedApp, IAuthorizedUser, IUsernameParams} from 'polaris-auth-client';
 import * as reCaptcha from '../reCaptcha';
 import * as uiInt from '../uiInterfaces';
 
@@ -31,7 +31,7 @@ let get$P = (p: string) : I$P => {
 interface IGlobal {
 	passwordResetPINEmail?:string;
 	temporaryPassword?:string;
-	signupEmail?:string;
+	signUpUserName?:string;
 }
 
 let __global:IGlobal = {};
@@ -204,36 +204,31 @@ var ResetPasswordDone = React.createClass({
 	}
 });
 
+// if (!/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i.test(email))
+
 var SingUpCheck = React.createClass({
-	getInitialState: () => ({email: ''}),
+	getInitialState: () => ({username: ''}),
 	handleEmailChange: function(e) {
-		//console.log('email changed to ' + e.target.value);
-		this.setState({email: e.target.value});
+		this.setState({username: e.target.value});
 	},
 	handleSubmit: function(event) {
 		event.preventDefault();
-		var email = this.state.email.trim();
-		if (!email) {
-			alert('Email is required');
+		var username = this.state.username.trim();
+		if (!username) {
+			alert('Username is required');
 		} else {
-			if (!/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i.test(email))
-				alert('invalid email address');
-			else {
-				var data = {
-					username: email
-				};
-				this.props.$P('/services/client/lookup_user', data, (err:any, ret:any) => {
-					if (err)
-						alert('invalid email: ' + JSON.stringify(err));
-					else {
-						__global.signupEmail = email;
-						if (ret.found)
-							window.location.hash = "#sign_up_login";
-						else
-							window.location.hash = "#create_account";
-					}
-				});
-			}
+			let params: IUsernameParams = {username};
+			this.props.$P('/services/client/lookup_user', params, (err:any, user:IAuthorizedUser) => {
+				if (err)
+					alert('invalid email: ' + JSON.stringify(err));
+				else {
+					__global.signUpUserName = user.userName;
+					if (JSON.stringify(user) != '{}')
+						window.location.hash = "#sign_up_login";
+					else
+						window.location.hash = "#create_account";
+				}
+			});
 		}
 	},
 	render: function() {
@@ -244,12 +239,12 @@ var SingUpCheck = React.createClass({
 				</div>
 				<form className="w3-container">
 					<p>
-						<label>Please enter your email below</label>
-						<input className="w3-input" type="text" placeholder="Email" value={this.state.email} onChange={this.handleEmailChange}/>
+						<label>Please a username</label>
+						<input className="w3-input" type="text" placeholder="account@domain.com" value={this.state.username} onChange={this.handleEmailChange.bind(this)}/>
 					</p>
 					<p>
 						<a className="w3-btn w3-white w3-border w3-border-blue w3-round w3-margin-right" href="#login"><i className="fa fa-chevron-left" aria-hidden="true"></i> Back</a>
-						<button className="w3-btn w3-white w3-border w3-border-blue w3-round" onClick={this.handleSubmit}>Next <i className="fa fa-chevron-right" aria-hidden="true"></i></button>
+						<button className="w3-btn w3-white w3-border w3-border-blue w3-round" onClick={this.handleSubmit.bind(this)}>Next <i className="fa fa-chevron-right" aria-hidden="true"></i></button>
 					</p>
 				</form>
 			</div>
@@ -270,7 +265,7 @@ var SignUpAndLogin = React.createClass({
 			alert('password are required');
 		} else {
 			let data: uiInt.ILoginParams = {
-				username: __global.signupEmail
+				username: __global.signUpUserName
 				,password: password
 				,signUpUserForApp: true
 			};
@@ -292,7 +287,7 @@ var SignUpAndLogin = React.createClass({
 				</div>
 				<form className="w3-container">
 					<h4><p>Great! It looks like you already have a {appSettings.companyName} account with us. Just enter the account password to sign up for {this.props.connectedApp.name}</p></h4>
-					<p><label>{__global.signupEmail}</label></p>
+					<p><label>{__global.signUpUserName}</label></p>
 					<p><input className="w3-input" type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/></p>
 					<p><button className="w3-btn w3-white w3-border w3-border-blue w3-round" onClick={this.handleSubmit}>Sign up for {this.props.connectedApp.name}</button></p>
 				</form>
@@ -306,6 +301,7 @@ var CreateAccount = React.createClass({
 		{
 			firstName: ''
 			,lastName: ''
+			,email: ''
 			,companyName: ''
 			,mobilePhone: ''
 			,password: ''
@@ -337,9 +333,10 @@ var CreateAccount = React.createClass({
 		event.preventDefault();
 		let __grecaptcha: reCaptcha.IreCaptcha = global["grecaptcha"];
 		//console.log(JSON.stringify(this.state));
-		var email = __global.signupEmail.trim();
+		var username = __global.signUpUserName;
 		var firstName = this.state.firstName.trim();
 		var lastName = this.state.lastName.trim();
+		var email = this.state.email.trim();
 		var companyName = this.state.companyName.trim();
 		var mobilePhone = this.state.mobilePhone.trim();
 		var promotionalMaterial = this.state.promotionalMaterial;
@@ -354,12 +351,15 @@ var CreateAccount = React.createClass({
 			alert('First name is required');
 		else if (!lastName)
 			alert('Last name is required');
+		else if (!email)
+			alert('Email is required');
 		else {
 			var data = {
-				username: email
+				username: username
 				,password: password
 				,firstName: firstName
 				,lastName: lastName
+				,email: email
 				,companyName: (companyName ? companyName : null)
 				,mobilePhone: mobilePhone
 				,promotionalMaterial: promotionalMaterial
@@ -370,7 +370,7 @@ var CreateAccount = React.createClass({
 					alert('!!! Error: ' + JSON.stringify(err));
 				else {
 					alert(JSON.stringify(ret));
-					window.location.replace('https://www.yahoo.com/');
+					window.location.hash = "#login";
 				}
 			});
 		}
@@ -382,9 +382,10 @@ var CreateAccount = React.createClass({
 					<h2 id="title">Create {appSettings.companyName} Account</h2>
 				</div>
 				<form className="w3-container">
-					<p><label>Email/User name: {__global.signupEmail}</label></p>
+					<p><label>User name: {__global.signUpUserName}</label></p>
 					<p><label>First name*</label><input className="w3-input" type="text" value={this.state.firstName} onChange={this.getHandleTextFieldChange('firstName')}/></p>
 					<p><label>Last name*</label><input className="w3-input" type="text" value={this.state.lastName} onChange={this.getHandleTextFieldChange('lastName')}/></p>
+					<p><label>Email*</label><input className="w3-input" type="text" value={this.state.email} onChange={this.getHandleTextFieldChange('email')}/></p>
 					<p><label>Company name</label><input className="w3-input" type="text" value={this.state.companyName} onChange={this.getHandleTextFieldChange('companyName')}/></p>
 					<p><label>Mobile phone*</label><input className="w3-input" type="text" value={this.state.mobilePhone} onChange={this.getHandleTextFieldChange('mobilePhone')}/></p>
 					<p><label>Password*</label><input className="w3-input" type="password" placeholder="Password" value={this.state.password} onChange={this.getHandleTextFieldChange('password')}/></p>
@@ -394,7 +395,7 @@ var CreateAccount = React.createClass({
 					<p><input className="w3-check" type="checkbox" defaultChecked={this.state.promotionalMaterial} onChange={this.getHandleCheckBoxFieldChange('promotionalMaterial')}/><label>  Send me promotional offers from {appSettings.companyName}. You can unsubscribe at any time.</label></p>
 					<p>
 						<a className="w3-btn w3-white w3-border w3-border-blue w3-round w3-margin-right" href="#sign_up_check"><i className="fa fa-chevron-left" aria-hidden="true"></i> Back</a>
-						<button className="w3-btn w3-white w3-border w3-border-blue w3-round" onClick={this.handleSubmit}>Create Account</button>
+						<button className="w3-btn w3-white w3-border w3-border-blue w3-round" onClick={this.handleSubmit.bind(this)}>Create Account</button>
 					</p>
 				</form>
 			</div>
