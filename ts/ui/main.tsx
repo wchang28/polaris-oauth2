@@ -220,13 +220,10 @@ var SingUpCheck = React.createClass({
 			let params: IUsernameParams = {username};
 			this.props.$P('/services/client/lookup_user', params, (err:any, user:IAuthorizedUser) => {
 				if (err)
-					alert('invalid username: ' + JSON.stringify(err));
+					window.location.hash = "#create_account";
 				else {
 					__global.signUpUserName = user.userName;
-					if (JSON.stringify(user) != '{}')
-						window.location.hash = "#sign_up_login";
-					else
-						window.location.hash = "#create_account";
+					window.location.hash = "#sign_up_login";
 				}
 			});
 		}
