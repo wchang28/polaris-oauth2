@@ -19,16 +19,6 @@ router.post('/get_connected_app', (req: express.Request, res: express.Response) 
 	});
 });
 
-router.post('/lookup_user', (req: express.Request, res: express.Response) => {
-	let params:auth_client.IUsernameParams = req.body;
-	getAuthorizationEndpoint(req).lookupUser(params.username, (err, data) => {
-		if (err)
-			res.status(400).json(err);
-		else
-			res.jsonp(data);
-	});
-});
-
 // login post - login UI will make this call when the "Login" button is pressed
 router.post('/login', (req: express.Request, res: express.Response) => {
 	console.log('hitting /login');
@@ -66,33 +56,44 @@ router.post('/login', (req: express.Request, res: express.Response) => {
 // this send a PIN to user's email
 router.post('/sspr', (req: express.Request, res: express.Response) => {
 	let params:auth_client.IUsernameParams = req.body;
-	getAuthorizationEndpoint(req).SSPR(params.username, (err, data) => {
+	getAuthorizationEndpoint(req).SSPR(params.username, (err:any, params: auth_client.IResetPasswordParams) => {
 		if (err)
 			res.status(400).json(err);
 		else
-			res.jsonp(data);
+			res.jsonp(params);
 	});
 });
 
 // reset password
 router.post('/reset_password', (req: express.Request, res: express.Response) => {
 	let params:auth_client.IResetPasswordParams = req.body;
-	getAuthorizationEndpoint(req).resetPassword(params.pin, (err, data) => {
+	getAuthorizationEndpoint(req).resetPassword(params.pin, (err:any) => {
 		if (err)
 			res.status(400).json(err);
 		else
-			res.jsonp(data);
+			res.jsonp({});
+	});
+});
+
+// lookup user in the system
+router.post('/lookup_user', (req: express.Request, res: express.Response) => {
+	let params:auth_client.IUsernameParams = req.body;
+	getAuthorizationEndpoint(req).lookupUser(params.username, (err:any, user: auth_client.IAuthorizedUser) => {
+		if (err)
+			res.status(400).json(err);
+		else
+			res.jsonp(user);
 	});
 });
 
 // create a new account and sign up for the client app
 router.post('/sign_up_new_user', (req: express.Request, res: express.Response) => {
 	let accountOptions:auth_client.IAccountOptions = req.body;
-	getAuthorizationEndpoint(req).signUpNewUser(accountOptions, (err, data) => {
+	getAuthorizationEndpoint(req).signUpNewUser(accountOptions, (err, user: auth_client.IAuthorizedUser) => {
 		if (err)
 			res.status(400).json(err);
 		else
-			res.jsonp(data);
+			res.jsonp(user);
 	});
 });
 
