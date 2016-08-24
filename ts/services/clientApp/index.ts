@@ -94,9 +94,6 @@ router.post('/reset_password', (req: express.Request, res: express.Response) => 
 // create a new account and sign up for the client app
 router.post('/sign_up_new_user', (req: express.Request, res: express.Response) => {
 	let data = req.body;
-	// data.firstName
-	let firstName = data.firstName;
-	let lastName = data.lastName;
 	let accountOptions = {
 		firstName: data.firstName
 		,lastName: data.lastName
