@@ -40,8 +40,10 @@ router.post('/login', (req: express.Request, res: express.Response) => {
 				let access = ret.access;
 				redirectUrl += '#';
 				let a:string[] = [];
-				for (let fld in access)
-					a.push(encodeURIComponent(fld) + '=' + encodeURIComponent(access[fld]));
+				for (let fld in access) {
+					if (access[fld] != null)
+						a.push(encodeURIComponent(fld) + '=' + encodeURIComponent(access[fld].toString()));
+				}
 				redirectUrl += a.join('&');
 			}
 			if (params.state) redirectUrl += '&state=' + encodeURIComponent(params.state);	// add application state info
