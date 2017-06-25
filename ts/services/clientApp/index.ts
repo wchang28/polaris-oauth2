@@ -28,29 +28,28 @@ router.post('/login', (req: express.Request, res: express.Response) => {
 	let signUpUserForApp = (data.signUpUserForApp ? true : false);
 	let params = getAppParams(req);
 	let response_type = params.response_type;
-	getAuthorizationEndpoint(req).userLogin(response_type, data.username, data.password, signUpUserForApp, (err:any, ret: auth_client.ILoginResult) => {
-		if (err)
-			res.status(400).json(err);
-		else {
-			let user = ret.user;
-			let redirectUrl = getAuthorizationEndpoint(req).redirect_uri;
-			if (response_type === 'code') {	// response_type is auth code => put auth code in url query string
-				redirectUrl += '?code=' + encodeURIComponent(ret.code);
-			} else if (response_type === 'token') {	// response_type is 'token' => put access token in url fragment (#)
-				let access = ret.access;
-				redirectUrl += '#';
-				let a:string[] = [];
-				for (let fld in access) {
-					if (access[fld] != null)
-						a.push(encodeURIComponent(fld) + '=' + encodeURIComponent(access[fld].toString()));
-				}
-				redirectUrl += a.join('&');
+	getAuthorizationEndpoint(req).userLogin(response_type, data.username, data.password, signUpUserForApp)
+	.then((ret: auth_client.ILoginResult) => {
+		let user = ret.user;
+		let redirectUrl = getAuthorizationEndpoint(req).redirect_uri;
+		if (response_type === 'code') {	// response_type is auth code => put auth code in url query string
+			redirectUrl += '?code=' + encodeURIComponent(ret.code);
+		} else if (response_type === 'token') {	// response_type is 'token' => put access token in url fragment (#)
+			let access = ret.access;
+			redirectUrl += '#';
+			let a:string[] = [];
+			for (let fld in access) {
+				if (access[fld] != null)
+					a.push(encodeURIComponent(fld) + '=' + encodeURIComponent(access[fld].toString()));
 			}
-			if (params.state) redirectUrl += '&state=' + encodeURIComponent(params.state);	// add application state info
-			console.log('redirecting browser to ' + redirectUrl);
-			let result: uiInt.ILoginResult =  {redirect_url: redirectUrl};
-			res.jsonp(result);
+			redirectUrl += a.join('&');
 		}
+		if (params.state) redirectUrl += '&state=' + encodeURIComponent(params.state);	// add application state info
+		console.log('redirecting browser to ' + redirectUrl);
+		let result: uiInt.ILoginResult =  {redirect_url: redirectUrl};
+		res.jsonp(result);
+	}).catch((err: any) => {
+		res.status(400).json(err);
 	});
 });
 
@@ -58,44 +57,44 @@ router.post('/login', (req: express.Request, res: express.Response) => {
 // this send a PIN to user's email
 router.post('/sspr', (req: express.Request, res: express.Response) => {
 	let params:auth_client.IUsernameParams = req.body;
-	getAuthorizationEndpoint(req).SSPR(params.username, (err:any, params: auth_client.IResetPasswordParams) => {
-		if (err)
-			res.status(400).json(err);
-		else
-			res.jsonp(params);
+	getAuthorizationEndpoint(req).SSPR(params.username)
+	.then((params: auth_client.IResetPasswordParams) => {
+		res.jsonp(params);
+	}).catch((err: any) => {
+		res.status(400).json(err);
 	});
 });
 
 // reset password
 router.post('/reset_password', (req: express.Request, res: express.Response) => {
 	let params:auth_client.IResetPasswordParams = req.body;
-	getAuthorizationEndpoint(req).resetPassword(params.pin, (err:any) => {
-		if (err)
-			res.status(400).json(err);
-		else
-			res.jsonp({});
+	getAuthorizationEndpoint(req).resetPassword(params.pin)
+	.then((ret: any) => {
+		res.jsonp(ret);
+	}).catch((err:any) => {
+		res.status(400).json(err);
 	});
 });
 
 // lookup user in the system
 router.post('/lookup_user', (req: express.Request, res: express.Response) => {
 	let params:auth_client.IUsernameParams = req.body;
-	getAuthorizationEndpoint(req).lookupUser(params.username, (err:any, user: auth_client.IAuthorizedUser) => {
-		if (err)
-			res.status(400).json(err);
-		else
-			res.jsonp(user);
+	getAuthorizationEndpoint(req).lookupUser(params.username)
+	.then((user: auth_client.IAuthorizedUser) => {
+		res.jsonp(user);
+	}).catch((err: any) => {
+		res.status(400).json(err);
 	});
 });
 
 // create a new account and sign up for the client app
 router.post('/sign_up_new_user', (req: express.Request, res: express.Response) => {
 	let accountOptions:auth_client.IAccountOptions = req.body;
-	getAuthorizationEndpoint(req).signUpNewUser(accountOptions, (err, user: auth_client.IAuthorizedUser) => {
-		if (err)
-			res.status(400).json(err);
-		else
-			res.jsonp(user);
+	getAuthorizationEndpoint(req).signUpNewUser(accountOptions)
+	.then((user: auth_client.IAuthorizedUser) => {
+		res.jsonp(user);
+	}).catch((err: any) => {
+		res.status(400).json(err);
 	});
 });
 

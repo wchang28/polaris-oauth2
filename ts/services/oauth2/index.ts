@@ -27,32 +27,32 @@ router.post('/token', (req: express.Request, res: express.Response) => {
 			switch(params.grant_type) {
 				case "password": {
 					if (!params.username || !params.password) throw oauth2.errors.bad_credential;
-					ae.automationLogin(params.username, params.password, (err:any, ret: auth_client.ILoginResult) => {
-						if (err)
-							onError(err);
-						else
-							res.jsonp(ret.access);
+					ae.automationLogin(params.username, params.password)
+					.then((ret: auth_client.ILoginResult) => {
+						res.jsonp(ret.access);
+					}).catch((err: any) => {
+						onError(err);
 					});
 					break;
 				}
 				case "refresh_token": {
 					if (!params.refresh_token) throw oauth2.errors.bad_credential;
-					ae.refreshToken(params.refresh_token, (err:any, access:oauth2.Access) => {
-						if (err)
-							onError(err);
-						else
-							res.jsonp(access);						
+					ae.refreshToken(params.refresh_token)
+					.then((access:oauth2.Access) => {
+						res.jsonp(access);
+					}).catch((err: any) => {
+						onError(err);
 					});
 					break;
 				}
 				case "authorization_code": {
 					if (!params.code) throw oauth2.errors.bad_credential;
-					ae.getAccessFromAuthCode(params.code, (err:any, access:oauth2.Access) => {
-						if (err)
-							onError(err);
-						else
-							res.jsonp(access);						
-					});
+					ae.getAccessFromAuthCode(params.code)
+					.then((access:oauth2.Access) => {
+						res.jsonp(access);
+					}).catch((err: any) => {
+						onError(err);
+					}); 
 					break;
 				}
 				default:
@@ -82,19 +82,18 @@ router.get('/authorize', (req: express.Request, res: express.Response) => {
 	else {
 		let appSettings: oauth2.ClientAppSettings = {client_id: authParams.client_id, redirect_uri: authParams.redirect_uri};
 		let ae = new auth_client.AuthClient(getGlobal(req).config.authorizeEndpointOptions, appSettings);
-		ae.getConnectedApp((err:any, connectedApp: auth_client.IConnectedApp) => {
-			if (err) {
-				console.error('!!! Error ===> ' + JSON.stringify(err));
-				onError(err);
-			} else {
-				let params:IAppParams = <IAppParams>(_.assignIn({}, authParams, {time_stamp: new Date()}));
-				let aes256 = new Aes256(getGlobal(req).config.cipherSecret);
-				let encryptd = aes256.encrypt(JSON.stringify(params));
-				// redirect user's browser to login screen with app params in the query string
-				let redirectUrl = '../../login' + '?p=' + encodeURIComponent(encryptd);
-				console.log('redirectUrl=' + redirectUrl);
-				res.redirect(redirectUrl);
-			}
+		ae.getConnectedApp()
+		.then((connectedApp: auth_client.IConnectedApp) => {
+			let params:IAppParams = <IAppParams>(_.assignIn({}, authParams, {time_stamp: new Date()}));
+			let aes256 = new Aes256(getGlobal(req).config.cipherSecret);
+			let encryptd = aes256.encrypt(JSON.stringify(params));
+			// redirect user's browser to login screen with app params in the query string
+			let redirectUrl = '../../login' + '?p=' + encodeURIComponent(encryptd);
+			console.log('redirectUrl=' + redirectUrl);
+			res.redirect(redirectUrl);
+		}).catch((err: any) => {
+			console.error('!!! Error ===> ' + JSON.stringify(err));
+			onError(err);
 		});
 	}
 });
