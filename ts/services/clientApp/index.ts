@@ -11,11 +11,11 @@ let getAuthorizationEndpoint = (req: express.Request) : auth_client.AuthClient =
 let getAppParams = (req: express.Request) : IAppParams => {return req["parameters"]};
 
 router.post('/get_connected_app', (req: express.Request, res: express.Response) => {
-	getAuthorizationEndpoint(req).getConnectedApp((err:any, connectedApp: auth_client.IConnectedApp) => {
-		if (err)
-			res.status(400).json(err);
-		else
-			res.jsonp(connectedApp);
+	getAuthorizationEndpoint(req).getConnectedApp()
+	.then((connectedApp: auth_client.IConnectedApp) => {
+		res.jsonp(connectedApp);
+	}).catch((err: any) => {
+		res.status(400).json(err);
 	});
 });
 
