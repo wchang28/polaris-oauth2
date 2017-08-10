@@ -13,7 +13,7 @@ let app = express();
 
 app.use(noCache);
 
-// "application/x-www-form-urlencoded" parser 
+// "application/x-www-form-urlencoded" parser
 app.use(bodyParser.urlencoded({ extended: false }));
 // "application/json" parser
 app.use(bodyParser.json({'limit': '100mb'}));
@@ -23,7 +23,7 @@ let muitipartFormDataParser = upload.single('avatar');
 app.use(muitipartFormDataParser);
 
 // local testing configuraton
-var local_testing_config = JSON.parse(fs.readFileSync(__dirname + '/../local_testing_config.json', 'utf8'));
+var local_testing_config = JSON.parse(fs.readFileSync(__dirname + '/../config/local_testing_config.json', 'utf8'));
 
 let config:IAppConfig = null;
 // argv[2] is config file
