@@ -1,11 +1,13 @@
-node_modules
-bower_components
+node_modules/
+.tscache/
+.baseDir.ts
+
+*.tmp.txt
 
 # Logs
 logs
 *.log
 npm-debug.log*
 
-js
-
-login/js/bundle.js
+js/
+public/js/
