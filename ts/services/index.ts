@@ -19,7 +19,7 @@ router.use('/ui', uiRouter);
 
 // all handlers in the '/client' needs to have a 'x-p' request header field
 function clientAppCallMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
-	let p = req.headers['x-p'];
+	let p = req.headers['x-p'] as string;
 	if (p) {
 		let config = getGlobal(req).config;
 		let aes256 = new Aes256(config.cipherSecret);
